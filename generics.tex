@@ -1,0 +1,79 @@
+\documentclass{llncs}
+
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{pdfpages}
+\usepackage{relsize}
+
+
+% Solidity
+\newcommand{\uint}{\texttt{uint}}
+\newcommand{\SafeMath}{\texttt{SafeMath}}
+\newcommand{\Storage}{\texttt{Storage}}
+\newcommand{\Contract}{\texttt{Contract}}
+% Java
+\newcommand{\UBI}{\texttt{UnsignedBigInteger}}
+\newcommand{\UBIshort}{\texttt{UBI}}
+\newcommand{\BI}{\texttt{BigInteger}}
+\newcommand{\ie}{\textit{, ie.\ }}
+
+\def\codesize{\smaller}
+\def\<#1>{\codeid{#1}}
+\newcommand{\codeid}[1]{\ifmmode{\mbox{\codesize\ttfamily{#1}}}\else{\codesize\ttfamily #1}\fi}
+
+\begin{document}
+
+\title{Power and Pitfalls of Generic Smart Contract}
+\titlerunning{Power and Pitfalls of Generics for Smart Contracts}
+\author{Andrea Benini \and Sara Migliorini \and Fausto Spoto}
+\institute{Dipartimento di Informatica, Universit\`a di Verona, Italy}
+
+\maketitle
+
+\begin{abstract}
+  TBD
+  \keywords{smart contract \and generics \and blockchain}
+\end{abstract}
+
+\section{Introduction}\label{sec:introduction}
+
+Blockchains exploit the redundant, concurrent execution of the same
+transactions on a decentralized network of many machines
+in order to enforce their execution in accordance to
+a set of predefined rules. Namely, blockchains make it hard, for a single machine,
+to disrupt the semantics of the transactions or their ordering: a misbehaving single machine
+gets immediately put out of consensus and isolated. Bitcoin~\cite{Nakamoto08,book-mastering-bitcoin}
+has been the first blockchain's success story. Here
+transactions are transfers of units of coins between accounts, with the specific rule that
+the same inputs cannot be spent twice. Bitcoin's coins are called bitcoins
+themselves and have been the first example of a blockchain \emph{token}.
+
+A few years after Bitcoin, another blockchain, called
+Ethereum~\cite{Buterin13,AntonopoulosW18}, introduced the possibility of programming
+transactions with an actual, imperative programming language, called Solidity.
+Ethereum's transactions are still paid in terms of its native \emph{ether} token,
+but they execute much more than token transfers. Namely,
+transactions run object constructors and methods, which results in a sort
+of \emph{world computer} that persists the same objects in the memory of all the
+computers in the blockchain's network. These computers must execute
+the transactions according to Solidity programs called
+\emph{smart contracts}, or will end up being put out of consensus. Among such programs,
+a few have emerged, that implement a dynamic ledger of coin transfers between accounts. These
+coins are not the native ether, but rather new, derived tokens.
+
+The rest of this paper is organized as follows.
+
+\section{Shared Entities using Generics}\label{sec:shared_entities}
+
+\section{An Attack to the Shared Entities Contract}\label{sec:attack}
+
+\section{Fixing the Compilation of the Shared Entities Contract} \label{sec:fix}
+
+\section{Conclusion}\label{sec:conclusion} 
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}
