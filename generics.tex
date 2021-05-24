@@ -25,7 +25,7 @@
 
 \begin{document}
 
-\title{Power and Pitfalls of Generic Smart Contract}
+\title{Power and Pitfalls of Generic Smart Contracts}
 \titlerunning{Power and Pitfalls of Generics for Smart Contracts}
 \author{Andrea Benini \and Sara Migliorini \and Fausto Spoto}
 \institute{Dipartimento di Informatica, Universit\`a di Verona, Italy}
@@ -46,24 +46,76 @@ a set of predefined rules. Namely, blockchains make it hard, for a single machin
 to disrupt the semantics of the transactions or their ordering: a misbehaving single machine
 gets immediately put out of consensus and isolated. Bitcoin~\cite{Nakamoto08,book-mastering-bitcoin}
 has been the first blockchain's success story. Here
-transactions are transfers of units of coins between accounts, with the specific rule that
-the same inputs cannot be spent twice. Bitcoin's coins are called bitcoins
-themselves and have been the first example of a blockchain \emph{token}.
+transactions are programmed in a non-Turing complete bytecode language,
+almost exclusively used to implement transfers of units of coins between \emph{accounts}.
 
 A few years after Bitcoin, another blockchain, called
 Ethereum~\cite{Buterin13,AntonopoulosW18}, introduced the possibility of programming
-transactions with an actual, imperative programming language, called Solidity.
-Ethereum's transactions are still paid in terms of its native \emph{ether} token,
-but they execute much more than token transfers. Namely,
-transactions run object constructors and methods, which results in a sort
+transactions in an actual, imperative and Turing-complete programming language, called Solidity.
+Solidity's code is organized in \emph{smart contracts}, that can be seen as
+objects that control money.
+Ethereum's transactions can hence execute much more than coin transfers. Namely,
+they run object constructors and methods, which results in a sort
 of \emph{world computer} that persists the same objects in the memory of all the
-computers in the blockchain's network. These computers must execute
-the transactions according to Solidity programs called
-\emph{smart contracts}, or will end up being put out of consensus. Among such programs,
-a few have emerged, that implement a dynamic ledger of coin transfers between accounts. These
-coins are not the native ether, but rather new, derived tokens.
+computers in the blockchain's network.
+
+In Solidity's bytecode,
+non-primitive values are referenced through a very general
+\<address> type. For instance, a Solidity method
+\<child(Person p, uint256 n) returns Person> actually compiles
+into \<child(address p, uint256 n) returns address>, losing most
+type information~\cite{CrafaPZ19}.
+At run time, it is the bytecode that gets executed. Hence,
+everything can be passed for \<p>, not just a \<Person>.
+The compiler cannot even enforce strong typing
+by generating defensive type instance checks and casts, since
+values are unboxed in Ethereum: they have no attached
+type information at run time,
+they are just numerical \emph{addresses}.
+It follows that calls to \<Person>'s methods
+on \<p> might actually execute arbitrary code, if \<p> is not a \<Person>.
+In other words, Solidity is not strongly typed.
+Consequently, it is highly discouraged, in Solidity, to call methods on parameters passed
+to our methods, such as on \<p> passed to \<child>, since an attacker can pass crafted
+objects for \<p>, with arbitrary implementations for their methods,
+which can result in the unexpected execution of
+dangerous code. This actually happened in the case of the infamous DAO hack~\cite{dao16}, that
+costed millions of dollars.
+
+Strong typing is one of the reasons that push towards the adoption
+of \emph{traditional} programming languages for smart contracts. For instance,
+the Cosmos blockchain~\cite{cosmos} uses Go. The
+Hotmoka blockchain~\cite{hotmoka} uses a subset of Java
+for smart contracts, called Takamaka~\cite{Spoto19,Spoto20}.
+Hyperledger~\cite{hyperldeger} allows Go and Java.
+Another reason is the availability of modern
+language features, missing in Solidity,
+such as \emph{generics}\ie the possibility of using
+type variables. Generics are powerful and very useful for programming
+smart contracts. In Java source code, they are strongly typed, if no \emph{unchecked operations}
+are used~\cite{NaftalinW06}, as it will always be the case in this paper.
+However, generics in Java are compiled by \emph{erasure}\ie replaced
+by their upwards bound, most often \<Object>. Hence, the risk
+is that generics introduce the same kind of attack to the bytecode
+as normal reference types do in Solidity.
+
+The contribution of this paper is to show a real-life
+use of generics for an actual smart contract used in the support
+library of the Takamaka language, and to show that a naive use
+of Java generics can lead to a code security vulnerability that
+allows an attacker to earn money by exploiting someone else's work.
+This paper will provide a fix to that specific issue,
+by obliging the compiler to generate defensive checks.
+More generally, this paper can be useful for the definition of
+bytecode languages for future smart contract languages, by
+learning from the weaknesses of Java bytecode.
 
 The rest of this paper is organized as follows.
+Sec.~\ref{sec:shared_entities} introduces our real-life Java smart
+contracts that uses generics. Sec.~\ref{sec:attack} shows that a naive
+deployment of that contract leads to a code vulnerability.
+Sec.~\ref{sec:fix} shows a fix to that vulnerability.
+Sec.~\ref{sec:conclusion} concludes.
 
 \section{Shared Entities using Generics}\label{sec:shared_entities}
 
