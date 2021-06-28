@@ -24,7 +24,7 @@ jobs:
       - name: Check pdf files
         run: |
           file 000_generics.pdf | grep -q ' PDF '
-      - rename: Rename pdf files
+      - name: Rename pdf files
         run: |
           mv 000_generics.pdf generics.pdf
       - name: Upload
