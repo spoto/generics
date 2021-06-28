@@ -15,15 +15,10 @@ manage critical information such as digital assets and identities. For these rea
 
 
 \begin{itemize}
-\item Solythesis \cite{solythesis_solidity_validation}: A compilation tool for smart contracts which provides an expressive language for specifying desired safety invariants. Given a smart contract and a set of user defined invariants, it is able to produce a new enriched contract which will reject all transactions that violate such invariants.
+\item Solythesis \cite{solythesis_solidity_validation}: A verification and compilation tool for smart contracts which provides an expressive language for specifying desired safety invariants. Given a smart contract and a set of user defined invariants, it is able to produce a new enriched contract which will reject all transactions that violate such invariants.
 
-\item SafeVM \cite{safevm}:  A  verification tool for Ethereum smart contracts which directly works on EVM bytecode and exploits the state-of-the-art verification engines already available for C programs. The basic idea is to take as input a smart contract in compiled EVM\ bytecode which can eventually contain some \<assert> or \<require> annotations, then such bytecode is decompiled and converted into a C program with \<ERROR> annotations. This produced C program can be verified by using existing verification tools.
- 
-\item In \cite{hol_smart_constracts} the authors propose the use of the existing Isabelle/HOL tool with the specification of a formal logic for EVM bytecode, in order to provide a verification tool for Ethereum smart contracts. More specifically, the desired properties  of contracts are stated in a pre/postcondition style, while the verification is done by recursively structuring contracts as a set of basic blocks
-down to the level of instructions.
+\item 
 
-\item Scilla \cite{scilla} is a new programming language for safe smart contracts which as been tailored taking   System F as a foundational calculus. It is able to provide strong safety guarantees by means of type soundness. Thanks to its minimalistic nature, it has been possible to define also a generic and extensible framework for lightweight verification of smart contracts by means of user-defined domain-specific analyse. \todo{Ci sono i generics??}
- 
 \end{itemize}
 
 Given the plurality of verification tools that have been developed for indentifying security bugs in smart contracts, a unified and standard approach for evaluating their accuracy and performances have been developed in \cite{effectiveness_analysis_tools}. This automated and systematic approach, called SolidiFI, consists in injecting bugs into all potential locations in a smart contract, in order to introduce different kinds of vulnerabilities, and then using several static analysis tools to identify which bugs each of them is able to detect.
