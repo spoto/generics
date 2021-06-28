@@ -1,1 +1,26 @@
 \section{Related Work}\label{sec:related_work}
+
+\todo{Forse questa parte va spostata.}
+
+
+\textbf{Generics Compilation --} Generics is a way for writing code parametrized by type, in other words a same piece of code can be written by using a type placehorder (ie. parameter) and then instantiated it for a specific type arguments. There exists two common ways to implement generics in a programming language that are often described in literature\,\cite{generics_categories} as \textit{heterogeneous} and \textit{homogeneous}. In the heterogeneous approach the code is specialized for each instance of the generic parameter, this is the approach adopted by the C++ \emph{templates}. Conversely, the homogeneous approach is the one provided by Java or .Net, in this case only one instance of the code is maintained that is shared by all generic instances. This implementation is based on the type \emph{erasure} mechanism in which the generic parameter is replaced by the upwards bound of each instance, most often \<Object>.
+%
+Even if the heterogeneous approach is the most safe one, it is rarely applied in particular in resource-constrained applications, because in this case the code size  may dramatically increase as some code is duplicated \cite{generics_embedded_systems}. Conversely, the latter approach ensures a smaller consumption of resources but can lead to the problems described in this paper. \\
+
+\noindent
+\textbf{Smart contracts vulnerabilities --} It has been estimated that on average, software developers make 100 to 150 errors for every thousand lines \cite{software_engineering}.
+In 2002, the National Institute of Standards and Technology (NIST) estimates that the economic costs of faulty software in the US is about tens of billions of dollars per year and represent approximately just under 1 percent of the nation's gross domestic product (GDP). The effects induced by errors in software development are even worse when such piece of software represents a smart contract for two main reasons. First of all, it is usually impossible to change a smart contract once it has been deployed, the immutability is one of its main characteristics and errors are treated as intended behaviours. Secondly, smart contracts often store and
+manage critical information such as digital assets and identities. For these reason several analysis of smart contracts vulnerabilities have been performed and some static analysis tools have been developed.
+
+
+
+\begin{itemize}
+\item Solythesis \cite{solythesis_solidity_validation}: A verification and compilation tool for smart contracts which provides an expressive language for specifying desired safety invariants. Given a smart contract and a set of user defined invariants, it is able to produce a new enriched contract which will reject all transactions that violate such invariants.
+
+\item 
+
+\end{itemize}
+
+Given the plurality of verification tools that have been developed for indentifying security bugs in smart contracts, a unified and standard approach for evaluating their accuracy and performances have been developed in \cite{effectiveness_analysis_tools}. This automated and systematic approach, called SolidiFI, consists in injecting bugs into all potential locations in a smart contract, in order to introduce different kinds of vulnerabilities, and then using several static analysis tools to identify which bugs each of them is able to detect.
+
+

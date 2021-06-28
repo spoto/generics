@@ -19,8 +19,6 @@
 \newcommand{\codeid}[1]{\ifmmode{\mbox{\codesize\ttfamily{#1}}}\else{\codesize\ttfamily #1}\fi}
 
 \usepackage{listings, xcolor}
-\newcommand{\todo}[1]{\textcolor{red}{#1}}
-
 
 \renewcommand{\UrlFont}{\ttfamily\codesize}
 
