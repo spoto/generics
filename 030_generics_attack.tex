@@ -101,12 +101,11 @@ Tendermint expects such validators to mine and vote the subsequent blocks, until
 validators set occurs.
 
 It is important that the \emph{Consistency of Shareholders} property holds
-for \<TendermintValidators>, since
-the shareholders of a \<TendermintValidators>
-must be instances of \<TendermintED25519Validator> (as declared in the generic
-signature of \<TendermintValidators>): class \<TendermintED25519Validator> enforces a
-match between its public key, that identifies who can spend the rewards sent to the validator,
-and its Tendermint identifier, that identifies which node of the blockchain
+for \<TendermintValidators>: its shareholders
+must be \<TendermintED25519Validator>s (as declared in the generic
+signature of \<TendermintValidators>) that enforce a
+match between their public key, that identifies who can spend the rewards sent to the validator,
+and their Tendermint identifier, that identifies which node of the blockchain
 must do the validation work (Fig.~\ref{fig:validator}).
 If it were possible to add a shareholder of another
 type \<Attacker>, the latter could declare the identifier of a node that does not correspond to its
