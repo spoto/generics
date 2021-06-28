@@ -1,0 +1,87 @@
+%
+\documentclass{llncs}
+
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{pdfpages}
+\usepackage{relsize}
+\usepackage{tcolorbox}
+
+\usepackage{svg}
+\newcommand{\orcid}[1]{\href{https://orcid.org/#1}{\includesvg[height = 2ex]{svg-inkscape/ORCID_iD}}}
+
+\newcommand{\ie}{\textit{, ie.\ }}
+
+\def\codesize{\smaller}
+\def\<#1>{\codeid{#1}}
+\newcommand{\codeid}[1]{\ifmmode{\mbox{\codesize\ttfamily{#1}}}\else{\codesize\ttfamily #1}\fi}
+
+\usepackage{listings, xcolor}
+
+\renewcommand{\UrlFont}{\ttfamily\codesize}
+
+\definecolor{verylightgray}{rgb}{.97,.97,.97}
+
+\lstdefinelanguage{Takamaka}{
+        keywords=[1]{abstract, break, case, catch, class, continue, default, do
+, else, false, finally, for, if, final, implements, extends, import, instanceof, interface, length, new, private, protected, public, return, super, switch, this, throw, true, try, while, var, null}, % generic keywords
+        keywordstyle=[1]\color{blue}\bfseries,
+        keywords=[2]{boolean, int, long, float, double, byte, short, char, void, enum}, % types; money and time units
+        keywordstyle=[2]\color{teal}\bfseries,
+        keywords=[3]{@Override,@View,@FromContract,@Payable}, % annotations
+        keywordstyle=[3]\color{violet}\bfseries,
+        identifierstyle=\color{black},
+        sensitive=false,
+        comment=[l]{//},
+        morecomment=[s]{/*}{*/},
+        commentstyle=\color{gray}\ttfamily,
+        stringstyle=\color{red}\ttfamily,
+        morestring=[b]',
+        morestring=[b]"
+}
+
+\lstset{
+        language=Takamaka,
+        backgroundcolor=\color{verylightgray},
+        extendedchars=true,
+        basicstyle=\scriptsize\ttfamily,
+        showstringspaces=false,
+        showspaces=false,
+        numbers=none,
+        numberstyle=\scriptsize,
+        numbersep=9pt,
+        tabsize=2,
+        breaklines=true,
+        showtabs=false,
+        captionpos=b
+}
+
+\begin{document}
+
+\title{Power and Pitfalls of Generic Smart Contracts}
+\titlerunning{Power and Pitfalls of Generics for Smart Contracts}
+\author{Andrea Benini \and Sara Migliorini \and Mauro Gambini \and Fausto Spoto}
+\institute{Dipartimento di Informatica, Universit\`a di Verona, Italy}
+
+\maketitle
+
+\begin{abstract}
+  \input{001_abstract}
+  \keywords{smart contract \and generics \and blockchain}
+\end{abstract}
+
+\input{010_introduction}
+\input{020_shared_entities_with_generics}
+\input{030_generics_attack}
+\input{040_solution}
+\input{050_related_work}
+
+\input{090_conclusion}
+
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}
