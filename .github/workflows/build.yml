@@ -26,7 +26,7 @@ jobs:
           file 000_generics.pdf | grep -q ' PDF '
       - rename: Rename pdf files
         run: |
-	  mv 000_generics.pdf generics.pdf
+          mv 000_generics.pdf generics.pdf
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
