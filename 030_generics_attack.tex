@@ -7,29 +7,52 @@ generic engine for replicating an application over a network of nodes. In our ca
 the application is the executor of smart contracts in Java, such as that in
 Fig.~\ref{fig:simple_shared_entity}. Tendermint is based on a proof of stake
 consensus, which means that a selected dynamic subset of the nodes is in charge of
-validating the transactions and voting their acceptance. Validator nodes are
+validating the transactions and voting their acceptance. In general, validator nodes are
 represented by \<Validator> objects, that are externally owned accounts
-with an extra identifier derived from their public key (see Fig.~\ref{fig:validator}).
+with an extra identifier. In the specific case of Tendermint,
+validators are \<TendermintED25519Validator> objects whose
+identifier is derived from their ed25519 public key (see Fig.~\ref{fig:validator}).
 This identifier is public information, reported in the blocks or easily eavesdropped.
-At each block, the reward for the block is distributed to the validators.
 Tendermint applications can implement their own
-policy for changing the validator set dynamically. In our case, the validator set
-and the distribution of the reward is implemented by a subclass
-\<Validators> of \<SimpleSharedEntity> whose type \<S> for the shareholders
-has been set to \<Validator>. Shares are voting power in this case.
+policy for changing the validator set dynamically.
+The \<AbstractValidators> class implements the validator set
+and the distribution of the reward and is a subclass of \<SimpleSharedEntity>
+(see Fig.~\ref{fig:tendermint_validators}).
+Shares are voting power in this case.
+Its subclass \<TendermintValidators> restricts the type \<S> of the shareholders
+to \<TendermintED25519Validator>.
+At each block committed, Hotmoka calls the \<reward> method of \<AbstractValidators>
+in order to reward the validators that behaved correctly
+and punish those that misbehaved. They are specified by two strings
+that contain the identifiers of the validators, as provided by the underlying
+Tendermint engine.
 
 \begin{figure}[t]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public final class Validator extends ExternallyOwnedAccount {
-  private final String id;
+public abstract class Validator extends ExternallyOwnedAccount {
 
   public Validator(String publicKey) {
     super(publicKey);
-    this.id = /* derived from publicKey as specified in Tendermint's spec */
   }
 
-  public @View String id() {
+  @View
+  public abstract String id();
+}
+
+public final class TendermintED25519Validator extends Validator {
+
+  // the first 40 characters of the hexadecimal representation
+  // of the sha256 hashing of the public key bytes
+  private final String id;
+
+  public TendermintED25519Validator(String publicKey) {
+    super(publicKey);
+    this.id = /* derived from publicKey as in the comment for id above */
+  }
+
+  @Override @View
+  public final String id() {
     return id;
   }
 }
@@ -39,24 +62,74 @@ public final class Validator extends ExternallyOwnedAccount {
   Its full code is available at \url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/governance/tendermint/TendermintED25519Validator.java}.}\label{fig:validator}
 \end{figure}
 
-Since shares of a \<SimpleSharedEntity> can be sold and bought, the set of validators
-is dynamic. Users can sell or buy voting power in order to invest in the blockchain
-and earn rewards. At each block creation, Hotmoka calls method \<getShareholders>
-on the shared entity and informs the
+\begin{figure}[t]
+  \begin{center}
+    \begin{lstlisting}[language=Takamaka]
+public abstract class AbstractValidators<V extends Validator>
+    extends SimpleSharedEntity<V, Offer<V>> {
+
+  public AbstractValidators(V[] validators, BigInteger[] powers) {
+    super(validators, powers);
+  }
+
+  public void reward
+    (String behaving, String misbehaving, BigInteger gasConsumed) { ... }
+}
+
+public class TendermintValidators
+    extends AbstractValidators<TendermintED25519Validator> {
+
+  public TendermintValidators
+        (TendermintED25519validator[] validators, BigInteger[] powers) {
+    super(validators, powers);
+  }
+}
+    \end{lstlisting}
+  \end{center}
+  \caption{The shared entity of the validators of a Hotmoka blockchain built over Tendermint.
+  Its full code is available at \url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/governance/tendermint/TendermintValidators.java}.}\label{fig:tendermint_validators}
+\end{figure}
+
+Since \<SimpleSharedEntity> allows shares to be sold and bought, this holds for
+its \<TendermintValidators> subclass as well: the set of validators
+is dynamic and it is possible to sell and buy voting power in order to invest in the blockchain
+and earn rewards at each block committed. At block creation time,
+Hotmoka calls method \<getShareholders> inherited from
+\<SimpleSharedEntity> and informs the
 underlying Tendermint engine about the identifiers of the validator nodes for the next blocks.
 Tendermint expects such validators to mine and vote the subsequent blocks, until a change in the
 validators set occurs.
 
-It is important that the shareholders be instances of \<Validator>, since that class enforces the
-match between their public key, that identifies who can use the reward sent to the validator,
-and the Tendermint identifier of the validator, that identifies which node of the blockchain
+It is important that the \emph{Consistency of Shareholders} property holds
+for \<TendermintValidators>: its shareholders
+must be \<TendermintED25519Validator>s (as declared in the generic
+signature of \<TendermintValidators>) that enforce a
+match between their public key, that identifies who can spend the rewards sent to the validator,
+and their Tendermint identifier, that identifies which node of the blockchain
 must do the validation work (Fig.~\ref{fig:validator}).
 If it were possible to add a shareholder of another
 type \<Attacker>, the latter could declare the identifier of a node that does not correspond to its
 public key (see Fig.~\ref{fig:attacker}):
-the node (belonging to the \emph{victim}) would do the work while the owner
-of the private key of the \<Attacker> could just wait and earn the reward.
+Tendermint would expect the node (belonging to the \emph{victim}) to do
+the validation work while the owner
+of the private key of the \<Attacker> could just wait for accrued awards to spend.
 A sort of validator's slavery.
+Sec.~\ref{sec:shared_entities} asserted that the \emph{Consistency of Shareholders}
+property holds, at source level.
+Namely, an \<attacker> (of type \<Attacker>) can only become shareholder
+by accepting an ongoing sale \<offer> of shares through a call to
+\<tv.accept(offer.cost, attacker, offer)> (see Fig.~\ref{fig:simple_shared_entity}).
+This is impossible at source level, where that call does \emph{not} compile, since \<attacker> has type \<Attacker> that
+is not an instance of \<S>, which has been set to \<TendermintED25519Validator>.
+But a Hotmoka blockchain contains only the bytecode of \<SimpleSharedEntity>,
+where the signature of \<accept> has been erased into
+\<accept(BigInteger amount, PayableContract buyer, Offer offer)>.
+Hence a blockchain transaction that invokes \<tv.accept(offer.cost, attacker, offer)>
+\emph{does} succeed, since \<attacker> is an externally owned account and all such accounts
+are \<PayableContract>s.
+That transaction adds \<attacker> to the shareholders of \<tv>,
+therefore violating the \emph{Consistency of Shareholders} property and allowing
+validator's slavery.
 
 \begin{figure}[t]
   \begin{center}
@@ -67,12 +140,13 @@ public class Attacker extends ExternallyOwnedAccount {
     super(publicKey);
   }
 
-  public @View String id() {
-    return /* id of the victim node of the blockchain */
+  @View
+  public String id() {
+    return /* id of the victim blockchain node, unrelated to publicKey */
   }
 }
     \end{lstlisting}
   \end{center}
-  \caption{An attacker that exploits a blockchain node for validation and fraudolently earns the reward of its work.}\label{fig:attacker}
+  \caption{An attacker that exploits a blockchain node for validation and fraudolently earns the rewards of its work.}\label{fig:attacker}
 \end{figure}
 
