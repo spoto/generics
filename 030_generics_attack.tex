@@ -36,7 +36,8 @@ public abstract class Validator extends ExternallyOwnedAccount {
     super(publicKey);
   }
 
-  public abstract @View String id();
+  @View
+  public abstract String id();
 }
 
 public final class TendermintED25519Validator extends Validator {
@@ -50,7 +51,8 @@ public final class TendermintED25519Validator extends Validator {
     this.id = /* derived from publicKey as in the comment for id above */
   }
 
-  public final @Override @View String id() {
+  @Override @View
+  public final String id() {
     return id;
   }
 }
@@ -139,7 +141,8 @@ public class Attacker extends ExternallyOwnedAccount {
     super(publicKey);
   }
 
-  public @View String id() {
+  @View
+  public String id() {
     return /* id of the victim blockchain node, unrelated to publicKey */
   }
 }
