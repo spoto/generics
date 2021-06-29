@@ -8,30 +8,32 @@
 Even if the heterogeneous approach is the most safe one, it is rarely applied in particular in resource-constrained applications, because in this case the code size  may dramatically increase as some code is duplicated \cite{generics_embedded_systems}. Conversely, the latter approach ensures a smaller consumption of resources but can lead to the problems described in this paper. \\
 
 \noindent
-\textbf{Smart contracts vulnerabilities --} It has been estimated that on average, software developers make 100 to 150 errors for every thousand lines \cite{software_engineering}.
-In 2002, the National Institute of Standards and Technology (NIST) estimates that the economic costs of faulty software in the US is about tens of billions of dollars per year and represent approximately just under 1 percent of the nation's gross domestic product (GDP). The effects induced by errors in software development are even worse when such piece of software represents a smart contract for two main reasons. First of all, it is usually impossible to change a smart contract once it has been deployed, the immutability is one of its main characteristics and errors are treated as intended behaviours. Secondly, smart contracts often store and
-manage critical information such as digital assets and identities. For these reason several analysis of smart contracts vulnerabilities have been performed and some static analysis tools have been developed.
+\textbf{Smart contracts vulnerabilities --} It has been estimated that on average, software developers make from 100 to 150 errors for every thousand lines of code \cite{software_engineering}.
+In 2002, the National Institute of Standards and Technology (NIST) estimates that the economic costs of faulty software in the US is about tens of billions of dollars per year and represent approximately just under 1 percent of the Nation's Gross Domestic Product (GDP). The effects induced by errors in software development are even worse when such pieces of software represents a smart contract. Indeed, it is usually impossible to change a smart contract once it has been deployed, the immutability is one of its main characteristics and errors are treated as intended behaviours. Moreover, smart contracts often store and
+manage critical information such as digital assets and identities. For this reason smart contract vulnerabilities and correctness is becoming an important topic in literature. Possible solutions can be classified into three main categories: (i) static analysis of EVM bytecode, (ii) automatic rectification of EVM bytecode and (iii) development of new languages for smart contract definition. 
 
-
-
-\begin{itemize}
-\item Solythesis \cite{solythesis_solidity_validation}: A compilation tool for smart contracts which provides an expressive language for specifying desired safety invariants. Given a smart contract and a set of user defined invariants, it is able to produce a new enriched contract which will reject all transactions that violate such invariants.
-
-\item Another solutions which is based on bytecode rewriting is presented in \cite{bytecode_rewriting}, where the authors propose the enforcement of security polices through the enhancement of EVM bytecode. More specifically, the disassembled bytecode is instrumented through new security guard code that enforces the desired policy. Their initial efforts are mainly focused on the  verification of arithmetic operations, such as the prevention of overflows; while in the future they will focus on
-adding the verification of memory access operations.
-
-\item SafeVM \cite{safevm}:  A  verification tool for Ethereum smart contracts which directly works on EVM bytecode and exploits the state-of-the-art verification engines already available for C programs. The basic idea is to take as input a smart contract in compiled EVM\ bytecode which can eventually contain some \<assert> or \<require> annotations, then such bytecode is decompiled and converted into a C program with \<ERROR> annotations. This produced C program can be verified by using existing verification tools.
- 
-\item In \cite{hol_smart_constracts} the authors propose the use of the existing Isabelle/HOL tool with the specification of a formal logic for EVM bytecode, in order to provide a verification tool for Ethereum smart contracts. More specifically, the desired properties  of contracts are stated in a pre/postcondition style, while the verification is done by recursively structuring contracts as a set of basic blocks
+Given the plurality of languages currently available for the design of smart contracts, static analysis is usually performed directly on the EVM bytecode, in order to make the solution general enough and promote its adoption. At this regards, SafeVM \cite{safevm} is s verification tool for Ethereum smart contracts which directly works on the EVM bytecode and exploits the state-of-the-art verification engines already available for C programs. The basic idea is to take as input a smart contract in compiled EVM\ bytecode which can eventually contain some \<assert> or \<require> annotations, then such bytecode is decompiled and converted into a C program with \<ERROR> annotations. This produced C program can be verified by using existing verification tools.
+%
+In \cite{hol_smart_constracts} the authors propose a verification tool for Ethereum smart contracts which is based on the use of the existing Isabelle/HOL tool together with the specification of a formal logic for EVM bytecode. More specifically, the desired properties  of contracts are stated in a pre/postcondition style, while the verification is done by recursively structuring contracts as a set of basic blocks
 down to the level of instructions.
+%
+Finally, another tool for the analysis of properties in  EVM bytecode is called EthIR\,\cite{ethir}. This open-source tool allows the precise decompilation of EVM bytecode into a high-level representation in a rule-based form. Given such representation, properties can be inferred throuth available state-of-the-art analysis tools developed for high-level languages. More specifically, it relies on an extension of Oyente, a tool that generates control-flow graphs of the code in order to derive a rule-based representation of the bytecode.
 
-\item Scilla \cite{scilla} is a new programming language for safe smart contracts which as been tailored taking   System F as a foundational calculus. It is able to provide strong safety guarantees by means of type soundness. Thanks to its minimalistic nature, it has been possible to define also a generic and extensible framework for lightweight verification of smart contracts by means of user-defined domain-specific analyse. \todo{Ci sono i generics oppure essendo un linguaggio minimale non si pongono il problema??}
-
-
-
- 
-\end{itemize}
+Relatively to the automatic rectification of smart contracts, Solythesis \cite{solythesis_solidity_validation} is compilation tool for smart contracts which provides an expressive language for specifying desired safety invariants. Given a smart contract and a set of user defined invariants, it is able to produce a new enriched contract which will reject all transactions that violate such invariants.
+%
+Another solutions which is based on bytecode rewriting is presented in \cite{bytecode_rewriting}, where the authors propose the enforcement of security polices through the enhancement of EVM bytecode. More specifically, the disassembled bytecode is instrumented through new security guard code that enforces the desired policy. Their initial efforts are mainly focused on the  verification of arithmetic operations, such as the prevention of overflows; while in the future they will focus on
+adding the verification of memory access operations.
+%
+SMARTSHIELD \cite{smartshield} is another tool for automatically rectifying bytecode with the aim to fix three typical security bugs in smart contracts:
+(i) state changes after external calls, (ii) missing checks for out-of-bound arithmetic operations, and (iii) missing checks for failing external calls. More specifically, given an identified issue, the tool performs a semantic-preserving code transformation to ensure that only the insecure code patterns are revised, eventually  sending the rectification suggestions back to the developers when the eventual fixes can lead to side effects. The tool not only guarantees that the rectified contracts are immune to certain attacks but also they are gas-friendly. Indeed, it adopts heuristics to optimize gas consumption. 
 
 Given the plurality of verification tools that have been developed for indentifying security bugs in smart contracts, a unified and standard approach for evaluating their accuracy and performances have been developed in \cite{effectiveness_analysis_tools}. This automated and systematic approach, called SolidiFI, consists in injecting bugs into all potential locations in a smart contract, in order to introduce different kinds of vulnerabilities, and then using several static analysis tools to identify which bugs each of them is able to detect.
+
+
+
+
+Finally, as regards to the definition of new programming languages for safe smart contracs,  Scilla \cite{scilla} is one of them. It has been tailored taking   System F as a foundational calculus and it is able to provide strong safety guarantees by means of type soundness. Thanks to its minimalistic nature, it has been possible to define also a generic and extensible framework for lightweight verification of smart contracts by means of user-defined domain-specific analyse. \todo{Ci sono i generics oppure essendo un linguaggio minimale non si pongono il problema??}
+
+
 
 
