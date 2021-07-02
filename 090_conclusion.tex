@@ -1,1 +1,34 @@
 \section{Conclusion}\label{sec:conclusion} 
+
+This paper has shown that generic types can be useful in the definition
+of smart contracts, but introduce risks of security since in many
+programming languages, including Java, they get erased at compile time
+into types that might be too permissive for low level calls, such as
+those that start blockchain transactions. Note that using a programming
+language without generics is not the solution: Solidity has no generics
+and consequently erases \emph{all} reference types into \<address>.
+That is the worst possible erasure.
+
+The solution in this paper has been to redefine a method with an argument
+of generic type in such a way to call its superclass
+(see \<accept> in Fig.~\ref{fig:solution}). This fixes the security risk,
+but cannot be regarded as an elegant solution. It is just a trick that
+works because it forces the compiler to generate some kind of bytecode.
+A \emph{smarter} compiler might recognize the redefined \<accept> as
+\emph{useless} and just remove it. This would recreate the issue that
+we have just solved. That is, our solution works only for the way
+compilers compile \emph{today}.
+
+With hindsight, it is questionable to have implemented generics by erasure
+and code instrumentation (bridge methods). If generics would be present
+and checked at bytecode level, the attack in Sec.~\ref{sec:attack} would just
+be impossible. Currently, generics can only exist as bytecode annotations,
+but they are not mandatory and are not used by the Java virtual machine
+that runs the bytecode. The same consideration might be applied beyond
+generics: many features of modern programming
+languages have no direct low-level
+counterpart but are implemented via instrumentation, starting from
+inner classes and closures. This is fine at source level, but allows
+low-level calls to easily circumvent
+the encapsulation guarantees of the language. When immerged in a permissionless
+blockchain, such features become dangerous attack surfaces.
