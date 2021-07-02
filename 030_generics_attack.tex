@@ -17,7 +17,7 @@ Tendermint applications can implement their own
 policy for changing the validator set dynamically.
 The \<AbstractValidators> class implements the validator set
 and the distribution of the reward and is a subclass of \<SimpleSharedEntity>
-(see Fig.~\ref{fig:tendermint_validators}).
+(see Fig.~\ref{fig:abstract_validators}).
 Shares are voting power in this case.
 Its subclass \<TendermintValidators> restricts the type \<S> of the shareholders
 to \<TendermintED25519Validator>.
@@ -86,8 +86,8 @@ public class TendermintValidators
 }
     \end{lstlisting}
   \end{center}
-  \caption{The shared entity of the validators of a Hotmoka blockchain built over Tendermint.
-  Its full code is available at \url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/governance/tendermint/TendermintValidators.java}.}\label{fig:tendermint_validators}
+  \caption{The shared entity of the validators of a Hotmoka blockchain.
+  Its full code is available at \url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/governance/AbstractValidators.java}.}\label{fig:abstract_validators}
 \end{figure}
 
 Since \<SimpleSharedEntity> allows shares to be sold and bought, this holds for

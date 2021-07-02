@@ -60,6 +60,39 @@
         captionpos=b
 }
 
+\lstdefinelanguage{JavaBytecode}{
+        keywords=[1]{abstract, class, extends, public, private, protected}, % generic keywords
+        keywordstyle=[1]\color{blue}\bfseries,
+        keywords=[2]{boolean, int, long, float, double, byte, short, char, void}, % types; money and time units
+        keywordstyle=[2]\color{teal}\bfseries,
+        keywords=[3]{aload_0,aload_1,aload_2,aload_3,invokespecial,invokevirtual,checkcast,return}, % bytecodes
+        keywordstyle=[3]\color{violet}\bfseries,
+        identifierstyle=\color{black},
+        sensitive=false,
+        comment=[l]{//},
+        morecomment=[s]{/*}{*/},
+        commentstyle=\color{gray}\ttfamily,
+        stringstyle=\color{red}\ttfamily,
+        morestring=[b]',
+        morestring=[b]"
+}
+
+\lstset{
+        language=JavaBytecode,
+        backgroundcolor=\color{verylightgray},
+        extendedchars=true,
+        basicstyle=\scriptsize\ttfamily,
+        showstringspaces=false,
+        showspaces=false,
+        numbers=none,
+        numberstyle=\scriptsize,
+        numbersep=9pt,
+        tabsize=2,
+        breaklines=true,
+        showtabs=false,
+        captionpos=b
+}
+
 \begin{document}
 
 \title{Power and Pitfalls of Generic Smart Contracts}
