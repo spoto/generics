@@ -30,7 +30,7 @@ public class TendermintValidators
   Its full code is available at \url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/governance/tendermint/TendermintValidators.java}.}\label{fig:solution}
 \end{figure}
 
-The fixed code is in Fig.~\ref{fig:solution}. The only difference is that method
+The fixed code is shown in Fig.~\ref{fig:solution}. The only difference is that method
 \<accept> has been redefined to force the correct type for \<buyer>. For the rest, that method
 delegates to its implementation in \<AbstractValidators>.
 It is important to investigate which is the Java bytecode generated from
@@ -75,3 +75,6 @@ cannot be passed to the first \<accept> (type mismatch) and makes the second \<a
 fail with a class cast exception. The \emph{Consistency of Shareholders} holds
 for instances of \<TendermintValidators> now and the attack in Sec.~\ref{sec:attack} cannot occur
 anymore.
+
+\todo{Si potrebbe dire che la soluzione è simile ad una gestione dei generics eterogenea? che però deve essere fatta a mano ridefinendo i metodi, invece che essere generata in automatico dal compilatore? }
+

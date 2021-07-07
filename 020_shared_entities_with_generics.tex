@@ -53,8 +53,7 @@ public interface SharedEntity<S extends PayableContract,O extends Offer<S>> {
 
 In general, two concepts are specific to each implementation of shared entities:
 who are the potential shareholders and how offers for selling shares work.
-Therefore, we have parameterized the interface of a shared entity with two type variables:
-\<S> is the type of the shareholders and \<O> is the type of the offers for selling shares.
+Therefore, we have parameterized the interface of a shared entity with two type variables\<S> is the type of the shareholders and \<O> is the type of the offers for selling shares.
 Fig.~\ref{fig:shared_entity} shows a simplification of our interface.
 It includes an inner class \<Offer> that models sale offers:
 it specifies who is the seller of the shares,
@@ -81,11 +80,11 @@ Method \<getShareholders> yields the list of the current shareholders of the ent
 It is not \<@View>, since it creates a new list.
 
 The annotation \<@FromContract> on both \<place> and \<accept> enforces that only
-contracts can call these methods. This attests, explicity, their will
+contracts can call these methods. This annotation explicitly states that the methods will
 to sell or buy shares. The callers must be (old or new) shareholders,
 hence of type \<S>. In Takamaka, this could be written
 as \<@FromContract(S.class)>. Unfortunately, Java does not allow a generic type variable \<S>
-in \<S.class>. Because of this limitation,
+in \<S.class>. Due of this limitation,
 the best we could write in Fig.~\ref{fig:shared_entity} is \<@FromContract(PayableContract.class)>,
 which allows \emph{any} \<PayableContract> to call these methods, not just those of type \<S>.
 Since the syntax of the language does not support our abstraction, we will have to
@@ -169,7 +168,7 @@ Fig.~\ref{fig:simple_shared_entity} shows our implementation of the \<SharedEnti
 in Fig.~\ref{fig:shared_entity}
 by using two fields: \<shares> maps each shareholder to its amount of shares and
 \<offers> collects the offers that have been placed.
-The constructor populates the map \<shares>, initially.
+The constructor initially populates the map \<shares>.
 Method \<sharesOf> simply accesses
 \<shares>, by using zero as default. Method \<place> requires its \<caller()> to be
 the seller identified in the \<offer>. This forbids shareholders to sell shares on behalf of others.
@@ -204,7 +203,7 @@ and become shareholders.
 There is, however, a problem with the reasoning
 in the previous paragraph. Namely, absence of unchecked
 operations guarantees strong typing \emph{of source code} in Java. But what is installed
-and executed in blockchain is the Java bytecode derived from
+and executed in blockchain is the Java bytecode which has been derived from
 the compilation of the code in Fig.~\ref{fig:simple_shared_entity}.
 Malicious users might install in blockchain some crafted bytecode that
 calls the methods of \<SimpleSharedEntity>s in order to attack
@@ -217,5 +216,5 @@ It entails that an attacker might install in blockchain a snippet of bytecode th
 the \emph{Consistency of Shareholders} property is easily violated at bytecode level.
 
 In general, the problem arises whenever a method declares a formal parameter of generic type,
-such as \<buyer> in method \<accept> in Fig.~\ref{fig:shared_entity}. Next section shows
+such as \<buyer> in method \<accept> of Fig.~\ref{fig:shared_entity}. Next section shows
 the actual significance of the consequent security risk.
