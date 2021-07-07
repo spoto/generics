@@ -1,1 +1,18 @@
-TBD
+Generics allow the use of type placeholders in order
+to write parametrized code, that can be instantiated for each
+concrete type provided for the placeholders. In many
+programming languages, such as Java, they are implemented by
+\emph{erasure}\ie replaced by their upper bound type.
+Generics are a powerful feature of programming languages that allows one
+to write highly reusable code. Namely, this paper shows their use in the
+context of smart contracts for blockchain, in order to implement
+a contract for \emph{shared entities} (such as a company shared
+by its shareholders),
+for the Hotmoka blockchain whose contracts are written in Java.
+It shows that a special case of shared entities is the validators set of
+the blockchain itself. However, this power comes at the risk of a too permissive
+typing of the compiled code, where generics have been erased.
+This paper shows
+that this allows an attack to the validators set and proposes a solution
+that forces the compiler to generate more precise type information than
+those arising by erasure.
