@@ -22,13 +22,13 @@ compilers compile \emph{today}.
 With hindsight, it is questionable to have implemented generics by erasure
 and code instrumentation (bridge methods). If generics would be present
 and checked at bytecode level, the attack in Sec.~\ref{sec:attack} would just
-be impossible. Currently, generics can only exist as bytecode annotations,
-but they are not mandatory and are not used by the Java virtual machine
+be impossible. Currently, generics can only exist as bytecode annotations
+that are not mandatory and are ignored by the Java virtual machine
 that runs the bytecode. The same consideration might be applied beyond
 generics: many features of modern programming
 languages have no direct low-level
 counterpart but are implemented via instrumentation, starting from
 inner classes and closures. This is fine at source level, but allows
 low-level calls to easily circumvent
-the encapsulation guarantees of the language. When immerged in a permissionless
+the encapsulation guarantees of the language. When embedded in a permissionless
 blockchain, such features become dangerous attack surfaces.

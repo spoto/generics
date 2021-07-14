@@ -14,7 +14,7 @@ A few years after Bitcoin, another blockchain, called
 Ethereum~\cite{Buterin13,AntonopoulosW18}, introduced the possibility of programming
 transactions in an actual, imperative and Turing-complete programming language, called Solidity.
 Solidity's code is organized in \emph{smart contracts}, that can be seen as
-objects that control money. \todo{A smart contract is essentially an agreement between two or more parties that can be automatically enforced without the need for a trustworthy intermediary\,\cite{ebp}.}
+objects that control money. \todo{A smart contract is essentially an agreement between two or more parties that can be automatically enforced without the need for a trustworthy intermediary~\cite{ebp}.}
 Ethereum's transactions can hence execute much more than coin transfers. Namely,
 they run object constructors and methods, which results in a sort
 of \emph{world computer} that persists the same objects in the memory of all the
@@ -26,7 +26,8 @@ non-primitive values are referenced through a very general
 \<child(Person p, uint256 n) returns Person> actually compiles
 into \<child(address p, uint256 n) returns address>, losing most
 type information~\cite{CrafaPZ19}.
-Since at run time, it is the bytecode that gets executed, everything can be passed for \<p>, not just a \<Person> instance.
+Since, at run time, it is the bytecode that gets executed,
+everything can be passed for \<p>, not just a \<Person> instance.
 The compiler cannot even enforce strong typing
 by generating defensive type instance checks and casts, because
 values are unboxed in Ethereum: they have no attached
@@ -49,7 +50,7 @@ Hotmoka blockchain~\cite{hotmoka} uses a subset of Java
 for smart contracts, called Takamaka~\cite{Spoto19,Spoto20}.
 Hyperledger~\cite{hyperldeger} allows Go and Java.
 Another reason is the availability of modern
-language features, which are missed in Solidity,
+language features, that are missed in Solidity,
 such as \emph{generics}\ie the possibility of using
 type variables. Generics are a powerful and very useful facility for programming
 smart contracts, \todo{since they allow one to personalize the behaviour of such contracts and partially overcome the inherent incompleteness of contracts \cite{ebp}}. In Java source code, generics are strongly typed, if no \emph{unchecked operations}
@@ -75,6 +76,6 @@ Sec.~\ref{sec:shared_entities} introduces our real-life Java smart
 contracts that uses generics. Sec.~\ref{sec:attack} shows that a na\"{i}ve
 deployment of that contract leads to a code vulnerability.
 Sec.~\ref{sec:fix} shows a fix to that vulnerability.
-Sec.~\ref{sec:related_work} discusses some related work and finally,
+Sec.~\ref{sec:related_work} discusses some related work and, finally,
 Sec.~\ref{sec:conclusion} concludes.
 

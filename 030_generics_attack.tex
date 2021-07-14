@@ -108,7 +108,7 @@ match between their public key, that identifies who can spend the rewards sent t
 and their Tendermint identifier, that identifies which node of the blockchain
 must do the validation work (Fig.~\ref{fig:validator}).
 If it were possible to add a shareholder of another
-type \<Attacker>, the latter could declare the identifier of a node that does not correspond to its
+type \<Attacker>, the latter could decouple the node identifier from its
 public key (see Fig.~\ref{fig:attacker}):
 Tendermint would expect the node (belonging to the \emph{victim}) to do
 the validation work while the owner
@@ -125,8 +125,9 @@ But a Hotmoka blockchain contains only the bytecode of \<SimpleSharedEntity>,
 where the signature of \<accept> has been erased into
 \<accept(BigInteger amount, PayableContract buyer, Offer offer)>.
 Hence a blockchain transaction that invokes \<tv.accept(offer.cost, attacker, offer)>
+at bytecode level
 \emph{does} succeed, since \<attacker> is an externally owned account and all such accounts
-are \<PayableContract>s.
+are instances of \<PayableContract>.
 That transaction adds \<attacker> to the shareholders of \<tv>,
 therefore violating the \emph{Consistency of Shareholders} property and allowing
 validator's slavery.
