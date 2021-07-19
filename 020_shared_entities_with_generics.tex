@@ -8,10 +8,11 @@ a voting community, where shares represent the voting power of each given voter.
 A further example are the validator nodes of a proof of stake blockchain,
 where shares represent their voting power and remuneration percentage.
 
-\begin{figure}[t]
+\begin{figure}[ht]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public interface SharedEntity<S extends PayableContract,O extends Offer<S>> {
+public interface SharedEntity<S extends PayableContract,
+                              O extends Offer<S>> {
 
   @View
   BigInteger sharesOf(S shareholder);
@@ -31,7 +32,8 @@ public interface SharedEntity<S extends PayableContract,O extends Offer<S>> {
     public final long expiration;
 
     public Offer
-        (S seller, BigInteger sharesOnSale, BigInteger cost, long duration) {
+        (S seller, BigInteger sharesOnSale, 
+         BigInteger cost, long duration) {
 
       this.seller = seller;
       this.sharesOnSale = sharesOnSale;
@@ -113,35 +115,47 @@ public class SimpleSharedEntity
       extends Contract
       implements SharedEntity<S,O> {
 
-  private final StorageTreeMap<S,BigInteger> shares = new StorageTreeMap<>();
-  private final StorageSet<O> offers = new StorageTreeSet<>();        
+  private final StorageTreeMap<S,BigInteger> shares = 
+     new StorageTreeMap<>();
+  private final StorageSet<O> offers = 
+     new StorageTreeSet<>();        
 
-  public SimpleSharedEntity(S[] shareholders, BigInteger[] shares) {
-    require(shareholders.length == shares.length, "length mismatch");
+  public SimpleSharedEntity
+    (S[] shareholders, BigInteger[] shares) {
+    require(shareholders.length == shares.length, 
+            "length mismatch");
     for (int pos = 0; pos < shareholders.length; pos++)
       addShares(shareholders[pos], shares[pos]);
   }
 
   @Override @View
   public final BigInteger sharesOf(S shareholder) {
-    return shares.getOrDefault(shareholder, BigInteger.ZERO);
+    return shares.getOrDefault
+      (shareholder, BigInteger.ZERO);
   }
 
   @Override @FromContract(PayableContract.class) @Payable
   public void place(BigInteger amount, O offer) {
-    require(offer.seller == caller(), "not authorized to sell");
-    require(shares.containsKey(offer.seller), "only shareholders can sell");
-    require(sharesOf(offer.seller).subtract(sharesOnSaleOf(offer.seller))
-        .compareTo(offer.sharesOnSale) >= 0, "not enough shares to sell");
+    require(offer.seller == caller(), 
+            "not authorized to sell");
+    require(shares.containsKey(offer.seller), 
+            "only shareholders can sell");
+    require(sharesOf(offer.seller)
+        .subtract(sharesOnSaleOf(offer.seller))
+        .compareTo(offer.sharesOnSale) >= 0, 
+        "not enough shares to sell");
     offers.add(offer);
   }
 
   @Override @FromContract(PayableContract.class) @Payable
   public void accept(BigInteger amount, S buyer, O offer) {
-    require(caller() == buyer, "only the future owner can buy the shares");
+    require(caller() == buyer, 
+            "only the future owner can buy the shares");
     require(offers.contains(offer), "unknown offer");
-    require(offer.isOngoing(), "the sale offer is not ongoing anymore");
-    require(offer.cost.compareTo(amount) <= 0, "not enough money");
+    require(offer.isOngoing(), 
+            "the sale offer is not ongoing anymore");
+    require(offer.cost.compareTo(amount) <= 0, 
+            "not enough money");
     offers.remove(offer);
     removeShares(offer.seller, offer.sharesOnSale);
     addShares(buyer, offer.sharesOnSale);
@@ -150,7 +164,8 @@ public class SimpleSharedEntity
 
   private BigInteger sharesOnSaleOf(S shareholder) {
     return offers.stream()
-      .filter(offer -> offer.seller == shareholder && offer.isOngoing())
+      .filter(offer -> offer.seller == shareholder && 
+              offer.isOngoing())
       .map(offer -> offer.sharesOnSale)
       .reduce(ZERO, BigInteger::add);
   }

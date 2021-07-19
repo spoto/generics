@@ -30,7 +30,8 @@ Tendermint engine.
 \begin{figure}[t]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public abstract class Validator extends ExternallyOwnedAccount {
+public abstract class Validator 
+       extends ExternallyOwnedAccount {
 
   public Validator(String publicKey) {
     super(publicKey);
@@ -40,7 +41,8 @@ public abstract class Validator extends ExternallyOwnedAccount {
   public abstract String id();
 }
 
-public final class TendermintED25519Validator extends Validator {
+public final class TendermintED25519Validator 
+       extends Validator {
 
   // the first 40 characters of the hexadecimal representation
   // of the sha256 hashing of the public key bytes
@@ -65,22 +67,26 @@ public final class TendermintED25519Validator extends Validator {
 \begin{figure}[t]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public abstract class AbstractValidators<V extends Validator>
+public abstract class 
+    AbstractValidators<V extends Validator>
     extends SimpleSharedEntity<V, Offer<V>> {
 
-  public AbstractValidators(V[] validators, BigInteger[] powers) {
+  public AbstractValidators
+    (V[] validators, BigInteger[] powers) {
     super(validators, powers);
   }
 
   public void reward
-    (String behaving, String misbehaving, BigInteger gasConsumed) { ... }
+    (String behaving, String misbehaving, 
+     BigInteger gasConsumed) { ... }
 }
 
 public class TendermintValidators
     extends AbstractValidators<TendermintED25519Validator> {
 
   public TendermintValidators
-        (TendermintED25519validator[] validators, BigInteger[] powers) {
+        (TendermintED25519validator[] validators, 
+         BigInteger[] powers) {
     super(validators, powers);
   }
 }

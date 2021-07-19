@@ -1,8 +1,8 @@
 \section{Introduction}\label{sec:introduction}
 
-Blockchains exploit the redundant, concurrent execution of the same
-transactions on a decentralized network of many machines
-in order to enforce their execution in accordance to
+\IEEEPARstart{B}{lockchains} exploit the redundant, concurrent execution of the same
+transactions on a decentralized network of many machines,
+in order to enforce their execution in accordance with
 a set of predefined rules. Namely, blockchains make it hard, for a single machine,
 to disrupt the semantics of the transactions or their ordering: a misbehaving single machine
 gets immediately put out of consensus and isolated. Bitcoin~\cite{Nakamoto08,book-mastering-bitcoin}
@@ -17,8 +17,8 @@ Solidity's code is organized in \emph{smart contracts}, that can be seen as
 objects that control money. \todo{A smart contract is essentially an agreement between two or more parties that can be automatically enforced without the need for a trustworthy intermediary~\cite{ebp}.}
 Ethereum's transactions can hence execute much more than coin transfers. Namely,
 they run object constructors and methods, which results in a sort
-of \emph{world computer} that persists the same objects in the memory of all the
-computers in the blockchain's network.
+of \emph{world computer} that persists the same objects inside the memory of all the
+computers composing the blockchain's network.
 
 In Solidity's bytecode,
 non-primitive values are referenced through a very general
@@ -37,7 +37,7 @@ It follows that \todo{inside the \<child> method, an eventual} call to a \<Perso
 on \<p> might actually execute any arbitrary code, if \<p> is not a \<Person>.
 In other words, Solidity is not strongly typed.
 Consequently, it is highly discouraged, in Solidity, to call methods on parameters passed
-to our methods, such as on \<p> passed to \<child>, since an attacker can pass crafted
+to another method, such as on \<p> passed to \<child>, since an attacker can pass crafted
 objects for \<p>, with arbitrary implementations for their methods,
 which can result in the unexpected execution of
 dangerous code. This actually happened in the case of the infamous DAO hack~\cite{dao16}, that
@@ -53,25 +53,40 @@ Another reason is the availability of modern
 language features, that are missed in Solidity,
 such as \emph{generics}\ie the possibility of using
 type variables. Generics are a powerful and very useful facility for programming
-smart contracts, \todo{since they allow one to personalize the behaviour of such contracts and partially overcome the inherent incompleteness of contracts \cite{ebp}}. In Java source code, generics are strongly typed, if no \emph{unchecked operations}
+smart contracts, \todo{since they allow one to personalize the behaviour of such contracts and partially overcome the their inherent incompleteness\,\cite{ebp}}. In Java source code, generics are strongly typed, if no \emph{unchecked operations}
 are used~\cite{NaftalinW06}, as it will always be the case in this paper.
-However,  in Java they are compiled by \emph{erasure}\ie replaced
-by their upwards bound, most often \<Object>. Hence, the risk
-is that generics introduce the same kind of attack to the bytecode
-as normal reference types do in Solidity.
+
+
+
+There exists two common ways to implement generics in a programming language,
+that are often described in literature~\cite{generics_categories} as \emph{heterogeneous}
+and \emph{homogeneous}. In the heterogeneous approach the code is specialized for each instance
+of the generic parameter; this is the approach adopted by C++ \emph{templates}.
+Conversely, the homogeneous approach is the one provided by Java and .Net; in this case,
+only one instance of the code is maintained and shared by all generic instances.
+This implementation is based on the type \emph{erasure} mechanism, where the generic parameter
+is replaced by the upwards bound of each instance, mostly often \<Object>.
+Even if the heterogeneous approach is the safest, it is rarely applied in particular
+in resource-constrained applications, because the code size may dramatically increase
+as some code is duplicated~\cite{generics_embedded_systems}. For code in blockchain,
+the heterogeneous approach obliges one to reinstall all instantiations of the generic code,
+with extra costs of gas.
+Conversely, the homogeneous approach ensures a smaller consumption
+of resources but it can introduce the same kind of attack to the bytecode
+as normal reference types do in Solidity, as we will describe in this paper.
 
 The contribution of this paper is to show a real-life
-use of generics for an actual smart contract used in the support
-library of the Takamaka language, and to show that a na\"{i}ve use
-of Java generics can lead to a code security vulnerability that
-allows an attacker to earn money by exploiting someone else's work.
+use of generics for an actual smart contract contained in the support
+library of the Takamaka language, and to demonstrate that a na\"{i}ve use
+of Java generics can lead to a code security vulnerability which
+allows an attacker to earn money by exploiting someone else's work, \todo{with both economical and legal side effects}.
 This paper will provide a fix to that specific issue,
-by forcing the compiler to generate defensive checks.
+by \todo{proposing a re-engineering of the code that forces} the compiler to generate defensive checks.
 More generally, this paper can be useful for the definition of
 bytecode languages for future smart contract languages, by
 learning from the weaknesses of Java bytecode.
 
-The rest of this paper is organized as follows.
+The remainder of this paper is organized as follows.
 Sec.~\ref{sec:shared_entities} introduces our real-life Java smart
 contracts that uses generics. Sec.~\ref{sec:attack} shows that a na\"{i}ve
 deployment of that contract leads to a code vulnerability.

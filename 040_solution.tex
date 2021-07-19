@@ -15,12 +15,16 @@ public class TendermintValidators
     extends AbstractValidators<TendermintED25519Validator> {
 
   public TendermintValidators
-        (TendermintED25519validator[] validators, BigInteger[] powers) {
+        (TendermintED25519validator[] validators, 
+         BigInteger[] powers) {
     super(validators, powers);
   }
 
   @Override @FromContract(PayableContract.class) @Payable
-  public void accept(BigInteger amount, TendermintED25519Validator buyer, Offer<TendermintED25519Validator> offer) {
+  public void accept
+    (BigInteger amount, 
+     TendermintED25519Validator buyer, 
+     Offer<TendermintED25519Validator> offer) {
     super.accept(amount, buyer, offer);
   }
 }
@@ -42,12 +46,14 @@ and modify its argument types, the compiled bytecode actually contains \emph{two
 public class TendermintValidators extends AbstractValidators {
   ...
   
-  public void accept(BigInteger,TendermintED25519Validator,Offer)
+  public void accept
+   (BigInteger,TendermintED25519Validator,Offer)
    aload_0
    aload_1
    aload_2
    aload_3
-   invokespecial AbstractValidators.accept(BigInteger,PayableContract,Offer)
+   invokespecial AbstractValidators
+     .accept(BigInteger,PayableContract,Offer)
    return
 
   // synthetic bridge method
@@ -57,7 +63,8 @@ public class TendermintValidators extends AbstractValidators {
    aload_2
    checkcast TendermintED25519Validator
    aload_3
-   invokevirtual accept(BigInteger,TendermintED25519Validator,Offer)
+   invokevirtual accept
+      (BigInteger,TendermintED25519Validator,Offer)
    return
 }
 \end{lstlisting}
