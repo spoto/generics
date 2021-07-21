@@ -12,6 +12,9 @@
 *.cb2
 .*.lb
 
+## Backup files:
+*.Backup-*
+
 ## Intermediate documents:
 *.dvi
 *.xdv
@@ -19,6 +22,7 @@
 # these rules might exclude image files for figures etc.
 # *.ps
 # *.eps
+*.ddf
 000_generics.pdf
 
 ## Generated if empty string is given at "Please type another file name for output:"
