@@ -1,6 +1,7 @@
 \section{Shared Entities using Generics}\label{sec:shared_entities}
 
-A \emph{shared entity} is something divided into \emph{shares}. Participants,
+A \emph{shared entity} is concept that often arises in blockchain
+applications. Namely, a it is something divided into \emph{shares}. Participants,
 that hold shares, are called \emph{shareholders} and can dynamically
 sell and buy shares. An example of a shared entity is a corporation,
 where shares represent units of possess of the company. Another example is
@@ -55,9 +56,12 @@ public interface SharedEntity<S extends PayableContract,
 
 In general, two concepts are specific to each implementation of shared entities:
 who are the potential shareholders and how offers for selling shares work.
-Therefore, we have parameterized the interface of a shared entity with two type variables:
+Therefore, one can parameterize the interface of a shared entity with two type variables:
 \<S> is the type of the shareholders and \<O> is the type of the offers for selling shares.
-Fig.~\ref{fig:shared_entity} shows a simplification of our interface.
+
+We are developing for the Hotmoka blockchain, that uses smart contracts written in a subset
+of Java called Takamaka.
+Fig.~\ref{fig:shared_entity} shows a simplification of our interface for shared entities.
 It includes an inner class \<Offer> that models sale offers:
 it specifies who is the seller of the shares,
 how many shares are being sold, the requested price and the expiration of the offer.
@@ -77,17 +81,17 @@ its cumulative number of shares (if it was a shareholder already).
 Also this method is \<@Payable>, since its caller must pay \<amount> $\ge$ \<offer.cost>
 coins to the seller.
 This means that shareholders must be able to receive payments and that
-is why \<S extends PayableContract>: the \<PayableContract>s are those that can receive
-payments in Takamaka.
+is why \<S extends PayableContract>: the \<PayableContract>s, in Takamaka, are those that can receive
+payments.
 Method \<getShareholders> yields the list of the current shareholders of the entity.
-It is not \<@View>, since it creates a new list.
+It is not \<@View>, since it creates a new list, which is a side-effect.
 
 The annotation \<@FromContract> on both \<place> and \<accept> enforces that only
 contracts can call these methods.
 These callers must be (old or new) shareholders,
 hence they must have type \<S>. In Takamaka, this could be written
 as \<@FromContract(S.class)>. Unfortunately, Java does not allow a generic type variable \<S>
-in \<S.class>. Due to this limitation,
+in \<S.class>. Due to this syntactical limitation of Java,
 the best we could write in Fig.~\ref{fig:shared_entity} is \<@FromContract(PayableContract.class)>,
 which allows \emph{any} \<PayableContract> to call these methods, not just those of type \<S>.
 Since the syntax of the language does not support our abstraction, we will have to
@@ -105,7 +109,7 @@ Let us state an important property about shared entities:
 \noindent
 This property is important since it states that we can trust the type \<S> of
 the shareholders: if we create a \<SharedEntity> and fix a specific type \<S>
-for its shareholders, then only instances of \<S> will manage to become shareholders.
+for its shareholders, then only instances of \<S> will actually manage to become shareholders.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -197,14 +201,14 @@ than one owns. At the end, \<place> adds the \<offer> to the set of \<offers>.
 Method \<accept> requires that who calls the method must be \<buyer>. Hence, successful
 calls to \<accept> can only pass the same caller for \<buyer>. This is a trick to enforce the
 caller to have type \<S>, since the syntax of the language does not allow one to express it,
-as we explained before. Then \<accept> requires the \<offer> to exists, to be still ongoing
+as we explained before. Then \<accept> requires the \<offer> to exist, to be still ongoing
 and to cost no more than the \<amount> of money provided to \<accept>. If that is the case,
 the \<offer> is removed from the \<offers>, shares are moved from seller to buyer (code not
 shown in Fig.~\ref{fig:simple_shared_entity}) and the seller of the \<offer>
 receives the required price \<offer.cost>.
 Method \<getShareholders()> yields the list of the keys in the domain of map \<shares>.
 
-It turns out that the \emph{Consistency of Shareholders} property holds if Java code
+It turns out that the \emph{Consistency of Shareholders} property holds if Java source code
 creates and populates \<SimpleSharedEntity>s.
 Namely, the code in Fig.~\ref{fig:simple_shared_entity}
 does not use unchecked casts, hence it is strongly-typed~\cite{NaftalinW06} and
@@ -214,20 +218,23 @@ of the dummy \<buyer> argument for method \<accept>. Without that argument,
 \emph{Consistency of Shareholders} would not hold, since we could only write
 \<addShares((S) caller(), offer.sharesOnSale)> in the implementation of \<accept> in
 Fig.~\ref{fig:simple_shared_entity}, with an unchecked cast that makes the code
-non-strongly-typed. Therefore, also contracts not of type \<S> could call \<accept>
+non-strongly-typed. In that case, also contracts not of type \<S> could call \<accept>
 and become shareholders.
 
 There is, however, a problem with the reasoning
 in the previous paragraph. Namely, absence of unchecked
-operations guarantees strong typing \emph{of source code} in Java. But what is installed
-and executed in blockchain is the Java bytecode which has been derived from
+operations guarantees strong typing of Java \emph{source} code. But what is installed
+and executed in blockchain is the Java bytecode that has been derived from
 the compilation of the code in Fig.~\ref{fig:simple_shared_entity}.
-Malicious users might install in blockchain some crafted bytecode that
-calls the methods of \<SimpleSharedEntity>s in order to attack
-the contract. In particular,
+Malicious users might install in blockchain some manually crafted bytecode,
+not derived from its Java source code compiled together with the source code
+in Fig.~\ref{fig:simple_shared_entity}.
+That crafted code might
+call the methods of \<SimpleSharedEntity>s in order to attack
+that contract. In particular,
 the signature of method \<accept> declares a parameter \<buyer> of type \<S> at source code level, but
-its compilation into Java bytecode declares a parameter \<buyer> of type \<PayableContract> instead.
-This is because of the so called \emph{erasure} of generic types in the compilation of Java.
+its compilation into Java bytecode declares an erased
+parameter \<buyer> of type \<PayableContract> instead.
 It follows that an attacker can install in blockchain a snippet of bytecode that calls
 \<accept> and passes \emph{any} \<PayableContract>, not only those that are instances of \<S>:
 the \emph{Consistency of Shareholders} property is easily violated at bytecode level.

@@ -2,11 +2,11 @@
 
 The security issue in Sec.~\ref{sec:attack} is due to the
 over-permissive erasure of the signature of method \<accept>,
-where \<buyer> has type \<PayableContract>.
+where \<buyer> is given type \<PayableContract>.
 Therefore, a solution is to oblige the compiler to generate a more
 restrictive signature where, in particular, the parameter \<buyer>
 has type \<TendermintED25519Validator>: only that type of accounts
-must be accepted for the validators.
+must be accepted for the validators, consequently banning instances of \<Attacker>.
 
 \begin{figure}[t]
   \begin{center}
@@ -36,7 +36,8 @@ public class TendermintValidators
 
 The fixed code is shown in Fig.~\ref{fig:solution}. The only difference is that method
 \<accept> has been redefined to enforce the correct type for \<buyer>. For the rest, that method
-delegates to its implementation in \<AbstractValidators>.
+delegates to its implementation inherited from \<AbstractValidators>, through a call
+to \<super.accept>.
 It is important to investigate which is the Java bytecode generated from
 the code in Fig.~\ref{fig:solution}. Since Java bytecode does not allow one to redefine a method
 and modify its argument types, the compiled bytecode actually contains \emph{two}
@@ -84,17 +85,17 @@ for instances of \<TendermintValidators> now and the attack in Sec.~\ref{sec:att
 anymore.
 
 The solution of redefining method \<accept> can be seen as a limited form of heterogeneous
-compilation of generics, restricted to a specific method and forced manually, rather than
-automatically performed by the compiler. It is interesting to consider which methods
-would need that redefinition, in general. They are those that have a parameter of generic type and
-that generic type is restricted in the subclass. For instance, method \<accept> in
+compilation of generics, restricted to a specific method and forced manually.
+It is interesting to consider which methods
+would need that redefinition, in general. They are those that have a parameter of a generic type
+that is restricted in a subclass. For instance, method \<accept> in
 Fig.~\ref{fig:shared_entity} has parameters \<buyer> and \<offer> of generic type
 \<S> and \<O>, respectively. The subclass in Fig.~\ref{fig:abstract_validators} restricts
 \<S> to be a \<TendermintED25519Validator> and \<O> to be
 an {\codesize\texttt{Offer<TendermintED25519Validator>}}. Hence we must redefine
 \<accept> in the subclass with the more specific types for the \<buyer> and \<offer>
-parameters. In general, a compiler might perform this automatically or a static analysis
+parameters. In the future, a compiler might perform this automatically or a static analysis
 tool might issue a warning when such redefinition is needed. Currently, however, this is
-left to the programmer, which might be the origin of security issues, as shown
-in Sec.~\ref{sec:attack}.
+left to the programmer of the smart contracts, who might overlook the issue
+and give rise to security issues, as shown in Sec.~\ref{sec:attack}.
 

@@ -50,10 +50,10 @@ Hotmoka blockchain~\cite{hotmoka} uses a subset of Java
 for smart contracts, called Takamaka~\cite{Spoto19,Spoto20}.
 Hyperledger~\cite{hyperldeger} allows Go and Java.
 Another reason is the availability of modern
-language features, that are missed in Solidity,
+language features, that are missing in Solidity,
 such as \emph{generics}\ie the possibility of using
 type variables. Generics are a powerful and very useful facility for programming
-smart contracts, since they allow one to personalize the behaviour of such contracts and partially overcome the their inherent incompleteness\,\cite{ebp}. In Java source code, generics are strongly typed, if no \emph{unchecked operations}
+smart contracts, since they allow one to personalize the behaviour of such contracts and partially overcome their inherent incompleteness\,\cite{ebp}. In Java source code, generics are strongly typed, if no \emph{unchecked operations}
 are used~\cite{NaftalinW06}, as it will always be the case in this paper.
 
 
@@ -74,9 +74,9 @@ learning from the weaknesses of Java bytecode.
 The remainder of this paper is organized as follows.
 Sec..~\ref{sec:java_generics} discusses the management of generics in Java.
 Sec.~\ref{sec:shared_entities} introduces our real-life Java smart
-contracts that uses generics. Sec.~\ref{sec:attack} shows that a na\"{i}ve
-deployment of that contract leads to a code vulnerability.
-Sec.~\ref{sec:fix} shows a fix to that vulnerability.
+contract that uses generics. Sec.~\ref{sec:attack} shows that a na\"{i}ve
+deployment of a subclass of that contract leads to a code vulnerability.
+Sec.~\ref{sec:fix} presents a fix to that vulnerability.
 Sec.~\ref{sec:related_work} discusses some related work and, finally,
 Sec.~\ref{sec:conclusion} concludes.
 

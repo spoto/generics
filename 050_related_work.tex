@@ -91,12 +91,12 @@ when the eventual fixes can lead to side effects. The tool not only guarantees t
 contracts are immune to certain attacks but also that they are gas-friendly.
 Indeed, it adopts heuristics to optimize gas consumption. 
 
-Given the plurality of verification tools that have been developed for indentifying security bugs
-in smart contracts, a unified and standard approach for evaluating their accuracy and performances
-have been developed in~\cite{effectiveness_analysis_tools}. This automated and systematic approach,
-called SolidiFI, consists in injecting bugs into all potential locations in a smart contract,
-in order to introduce different kinds of vulnerabilities, and then using several static analysis
-tools to identify which bugs each of them is able to detect.
+%Given the plurality of verification tools that have been developed for indentifying security bugs
+%in smart contracts, a unified and standard approach for evaluating their accuracy and performances
+%have been developed in~\cite{effectiveness_analysis_tools}. This automated and systematic approach,
+%called SolidiFI, consists in injecting bugs into all potential locations in a smart contract,
+%in order to introduce different kinds of vulnerabilities, and then using several static analysis
+%tools to identify which bugs each of them is able to detect.
 
 Finally, as regards to the definition of new programming languages for safe smart contracs,
 Scilla~\cite{scilla} has been tailored by taking System~F as a foundational calculus.
@@ -107,4 +107,4 @@ analyses. The type variables of the functional foundational calculus can be seen
 generic types. We do not know how they are compiled and if the strong typing guarantee of the
 source code extends to the compiled code as well. Scilla contracts are developed with
 the Neo Savant online IDE. Currently, neither Neo Savant IDE nor the block explorer
-allow one to inspect the compiled bytecode.
+allow one to inspect the compiled bytecode, in order to undertsnad how generic types are compiled.

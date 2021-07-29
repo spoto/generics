@@ -1,18 +1,40 @@
 \section{Generics Management in Java}\label{sec:java_generics}
 
 There exists two common ways to implement generics in a programming language,
-that are often described in literature~\cite{generics_categories} as \emph{heterogeneous}
-and \emph{homogeneous}. In the heterogeneous approach the code is specialized for each instance
-of the generic parameter; this is the approach adopted by C++ \emph{templates}.
-Conversely, the homogeneous approach is the one provided by Java and .Net; in this case,
+that are often described in literature as \emph{heterogeneous}
+and \emph{homogeneous}~\cite{generics_categories}.
+In the heterogeneous approach, the code is duplicated and specialized for each instance
+of the generic parameters; this is the approach adopted by C++ \emph{templates}.
+Conversely, the homogeneous approach is that provided by Java and .Net; in this case,
 only one instance of the code is maintained and shared by all generic instances.
 This implementation is based on the type \emph{erasure} mechanism, where the generic parameter
 is replaced by the upwards bound of each instance, mostly often \<Object>.
 Even if the heterogeneous approach is the safest, it is rarely applied in particular
 in resource-constrained applications, because the code size may dramatically increase
-as some code is duplicated~\cite{generics_embedded_systems}. For code in blockchain,
+because of duplicated~\cite{generics_embedded_systems}. For code in blockchain,
 the heterogeneous approach obliges one to reinstall all instantiations of the generic code,
-with extra costs of gas.
-Conversely, the homogeneous approach ensures a smaller consumption
-of resources but it can introduce the same kind of attack to the bytecode
-as normal reference types do in Solidity, as we will describe in this paper.
+with extra costs of gas, which makes it impractical.
+Conversely, the homogeneous approach ensures a smaller consumption of resources.
+
+In order to understand the mechanism of erasure, consider for instance
+the interface \<SharedEntity> in Fig.~\ref{fig:shared_entity} and its method \<accept>.
+The functionality of \<SharedEntity> will be discussed later (Sec.~\ref{sec:shared_entities}).
+Here, we only consider how its generic type parameters get compiled.
+Namely, \<SharedEntity> uses two generic type parameters \<S> and \<O>, that must be provided
+whenever a client creates a concrete implementation of the interface.
+Such generic parameters have an upper bound: \<S> can only be a subtype of \<PayableContract>,
+while \<O> can only be a subtype of {\codesize\texttt{Offer<S>}}. If we check the bytecode
+generated for \<SharedEntity>, we will see that \<accept> is declared, in bytecode, as
+\<void accept(BigInteger amount, PayableContract buyer, Offer offer)>, that is,
+the two type variables \<S> and \<O> have been \emph{erased} and replaced with their
+respective upper bound.
+
+Erasure weakens the type information of the compiled code. It is the responsibility of the
+compiler to guarantee that types are still respected, in all implementations of \<SharedEntity>.
+In Java, the compiler guarantees type correctness and the Java language remains strongly-typed,
+also in the presence of generic types,
+if no \emph{unchecked operations} are performed~\cite{NaftalinW06} (such as casts to generic types,
+that are unchecked for a limitation of the Java bytecode).
+However, this guarantee applies to Java source code compiled by the Java compiler,
+not to bytecode that can be generated manually, in order to attack class \<SharedEntity>,
+as we will show later.
