@@ -58,22 +58,7 @@ are used~\cite{NaftalinW06}, as it will always be the case in this paper.
 
 
 
-There exists two common ways to implement generics in a programming language,
-that are often described in literature~\cite{generics_categories} as \emph{heterogeneous}
-and \emph{homogeneous}. In the heterogeneous approach the code is specialized for each instance
-of the generic parameter; this is the approach adopted by C++ \emph{templates}.
-Conversely, the homogeneous approach is the one provided by Java and .Net; in this case,
-only one instance of the code is maintained and shared by all generic instances.
-This implementation is based on the type \emph{erasure} mechanism, where the generic parameter
-is replaced by the upwards bound of each instance, mostly often \<Object>.
-Even if the heterogeneous approach is the safest, it is rarely applied in particular
-in resource-constrained applications, because the code size may dramatically increase
-as some code is duplicated~\cite{generics_embedded_systems}. For code in blockchain,
-the heterogeneous approach obliges one to reinstall all instantiations of the generic code,
-with extra costs of gas.
-Conversely, the homogeneous approach ensures a smaller consumption
-of resources but it can introduce the same kind of attack to the bytecode
-as normal reference types do in Solidity, as we will describe in this paper.
+
 
 The contribution of this paper is to show a real-life
 use of generics for an actual smart contract contained in the support
@@ -87,6 +72,7 @@ bytecode languages for future smart contract languages, by
 learning from the weaknesses of Java bytecode.
 
 The remainder of this paper is organized as follows.
+Sec..~\ref{sec:java_generics} discusses the management of generics in Java.
 Sec.~\ref{sec:shared_entities} introduces our real-life Java smart
 contracts that uses generics. Sec.~\ref{sec:attack} shows that a na\"{i}ve
 deployment of that contract leads to a code vulnerability.
