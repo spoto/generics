@@ -6,7 +6,7 @@ to produce parametrized code, that can be instantiated for each
 concrete type provided for them. 
 %
 In many programming languages, such as Java, they are implemented by
-\emph{erasure}\ie replaced by their upper bound type during bytecode compilation.
+\emph{erasure}\ie replaced by their upper bound type during compilation into bytecode.
 %
 This paper investigates the use of generics in the
 context of smart contracts for blockchain, in order to implement
@@ -14,9 +14,9 @@ a contract for \emph{shared entities} (such as a company shared
 by its shareholders),
 by using the Hotmoka blockchain whose contracts are written in Java.
 %
-The considered case study is particular important since
+The considered case study is particularly important since
 a special case of shared entities could be the validators' set of
-the blockchain itself. The analysis shows that, the power of generics comes at the risk of a too permissive
+the blockchain itself. The analysis shows that the power of generics comes at the risk of a too permissive
 typing of the compiled code, due to the erasure mechanism, with a consequent possible attack
 to the validators' set. This paper proposes a solution
 that forces the compiler to generate more precise type information than

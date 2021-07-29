@@ -83,5 +83,18 @@ fail with a class cast exception. The \emph{Consistency of Shareholders} holds
 for instances of \<TendermintValidators> now and the attack in Sec.~\ref{sec:attack} cannot occur
 anymore.
 
-\todo{Si potrebbe dire che la soluzione e' simile ad una gestione dei generics eterogenea? che pero' deve essere fatta a mano ridefinendo i metodi, invece che essere generata in automatico dal compilatore? }
+The solution of redefining method \<accept> can be seen as a limited form of heterogeneous
+compilation of generics, restricted to a specific method and forced manually, rather than
+automatically performed by the compiler. It is interesting to consider which methods
+would need that redefinition, in general. They are those that have a parameter of generic type and
+that generic type is restricted in the subclass. For instance, method \<accept> in
+Fig.~\ref{fig:shared_entity} has parameters \<buyer> and \<offer> of generic type
+\<S> and \<O>, respectively. The subclass in Fig.~\ref{fig:abstract_validators} restricts
+\<S> to be a \<TendermintED25519Validator> and \<O> to be
+an {\codesize\texttt{Offer<TendermintED25519Validator>}}. Hence we must redefine
+\<accept> in the subclass with the more specific types for the \<buyer> and \<offer>
+parameters. In general, a compiler might perform this automatically or a static analysis
+tool might issue a warning when such redefinition is needed. Currently, however, this is
+left to the programmer, which might be the origin of security issues, as shown
+in Sec.~\ref{sec:attack}.
 
