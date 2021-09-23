@@ -1,0 +1,107 @@
+Paper #: 49
+Conference: The Third International Conference on Blockchain Computing and Applications (BCCA2021)
+http://intelligenttech.org/BCCA2021/index.php
+Title: Power and Pitfalls of Generic Smart Contracts
+Author(s): Andrea Benini, Mauro Gambini, Sara Migliorini, Fausto Spoto
+
+Dear Sara Migliorini,
+
+Thank you for having submitted your paper (Power and Pitfalls of Generic Smart Contracts) to The Third International Conference on Blockchain Computing and Applications (BCCA2021).
+
+On behalf of the Technical Program Committee, we are pleased to inform you that your paper 49: (Power and Pitfalls of Generic Smart Contracts) has been accepted for presentation at the The Third International Conference on Blockchain Computing and Applications (BCCA2021), NOV. 15 – NOV. 17, 2021 – TARTU, ESTONIA (Virtual) and for publication in its IEEE proceeding. Please revise your paper carefully to address the reviewers’ comments and suggestions, and to ensure that your final paper fits the camera-ready format.
+
+All submitted papers undergo a rigorous review process with at least 3 reviews per paper, overseen by TPC Chairs, and an additional review when needed. The selection of papers was very competitive, and all papers were discussed at the TPC meeting held on Sept. 20th, 2021. The reviews for your paper are shown below and can also be found at https://easychair.org/conferences/?conf=bcca2020, using your login credentials.
+
+* COVID-19 UPDATE:
+The organizing team has been closely monitoring the development of the COVID-19 situation at the conference venue, ESTONIA! The safety and well-being of all conference participants is our most priority. Therefore, considering the current circumstances, BCCA2021 will run as a virtual conference through one of the online meetings platforms. More information in this regard will be communicated later.
+
+** Conference Registration and Camera-ready:
+- IEEE policy states that ALL accepted BCCA2021 technical papers must have at least one author register at either the FULL or LIMITED registration rate. For authors with multiple accepted papers, one registration can be used for up to 2 papers.
+- NO changes to the author list are allowed. Failure to abide by this policy will result in your paper being excluded from the program.
+- ALL accepted papers must be presented virtually by an author. If none of the authors can present, then a substitute presenter request can be sent to the TPC Chair for review.
+- For registration information, Due on Oct. 11th. please visit http://intelligenttech.org/BCCA2021/registration.php
+- For Camera-ready information, Due on Oct. 11th. please visit http://intelligenttech.org/BCCA2021/cameraready.php.
+- The submission link of the camera-ready version will be available soon!
+
+Congratulations once again for having your paper accepted for BCCA2021.
+
+Best Regards,
+BCCA2021 TPC Co-Chairs
+
+SUBMISSION: 49
+TITLE: Power and Pitfalls of Generic Smart Contracts
+
+
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 49
+TITLE: Power and Pitfalls of Generic Smart Contracts
+AUTHORS: Andrea Benini, Mauro Gambini, Sara Migliorini and Fausto Spoto
+
+----------- Overall evaluation -----------
+The authors discuss how generics compiled by type erasure to bytecode
+are unsafe in the presence of linking.
+
+The paper is well-written and addresses an important topic for Smart
+Contract writers; moreover, the examples and explanations are
+didactical and the literature review seems appropriate.
+
+Unfortunately, other than didactical value, the paper describes a very
+well-known problem since the origins of the generics implementation in
+Java. Thus, while I like the way the paper is written, I cannot
+support it, unless it would be termed a "SoK" paper and the PC would
+think it properly fits into the conference program.
+
+The topic of "secure compilation" [for example in the presence of
+linking] has been a hot topic in the last 5/10 years, with the
+"Principles of Secure Compilation" series of workshops at POPL
+gathering a large part of the community.
+
+I think the paper would become much more interesting if the authors
+would use tools coming from the programming language community to
+formally state the problem and propose a principled solution.
+
+A good starting point could be the classical "Featherweight Java: A
+Minimal Core Calculus for Java and GJ", but for sure you would like to
+find a better descendant of that line of work.
+
+The authors also mention the more robust (usually) approach to
+"generics" which is found in languages based on the Girard-Reynolds
+type-level quantification, such as system-F. Indeed, these languages
+suffer from less problems, at the cost of usually giving away
+subtyping.
+
+Typos: p.2 : "increase because of duplicated [15]" => missing sentence ending.
+
+
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 49
+TITLE: Power and Pitfalls of Generic Smart Contracts
+AUTHORS: Andrea Benini, Mauro Gambini, Sara Migliorini and Fausto Spoto
+
+----------- Overall evaluation -----------
+This paper investigates the use of generics in the
+context of smart contracts for blockchain, to implement
+a contract for shared entities using the Hotmoka blockchain.
+
+This well-written and easy-to-follow article focuses on a case study, addressing a specific topic that originated from a security issue in the authors' code. The various sections are consistent with each other. The related works cited seem adequate.
+
+Despite some doubts about the relevance of the work and its overall contribution, I think the quality of the article (also because of the appreciable way it is written) is sufficient.
+
+There are no other major remarks.
+
+Minor remarks:
+The rationale for the research should appear in the introduction (rather than at the beginning of section IV).
+
+Figures (1,2,3,4,6) should not contain links. It is preferable to use references.
+There is a figure on page 6 that contains no caption.
+
+
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 49
+TITLE: Power and Pitfalls of Generic Smart Contracts
+AUTHORS: Andrea Benini, Mauro Gambini, Sara Migliorini and Fausto Spoto
+
+----------- Overall evaluation -----------
+This paper aims to propose a solution to the issue that the use of Java generics can lead to a code security vulnerability. The paper looks good and has a valid contribution, and therefore, I would like to recommend accept. I have only one comment which may be considered to improve this paper. If the problem introduced in this paper is extended to a general problem by means of showing it in other languages adopted by Smart Contract, i.e., Solidity, it will have a higher impact.
