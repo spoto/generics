@@ -66,6 +66,12 @@ representation, properties can be inferred through available state-of-the-art an
 for high-level languages. More specifically, EthIR relies on an extension of Oyente,
 a tool that generates code control-flow graphs in order to derive
 a rule-based representation of the bytecode.
+%
+Considering the specific case of the Java language,
+formal techniques for static analysis can be built, for instance, over
+the Featherweight Java calculus~\cite{IgarashiPW01}, or by abstract
+interpretation~\cite{Spoto16}. Currently, however, we are not aware
+of formal verifications for generics, at bytecode level.
 
 Relatively to the automatic certification of smart contracts,
 Solythesis~\cite{solythesis_solidity_validation} is a compilation tool for smart contracts

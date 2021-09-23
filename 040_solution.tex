@@ -71,9 +71,9 @@ public class TendermintValidators extends AbstractValidators {
 \end{lstlisting}
 
 \noindent
-The first \<accept> method is the compilation of that from Fig.~\ref{fig:solution}:
+The first \<accept> method above is the compilation of that from Fig.~\ref{fig:solution}:
 it delegates to the \<accept> method of the superclass \<AbstractValidators>. The second
-\<accept> method is a \emph{bridge method} that the compiler generates in order to guarantee
+\<accept> method above is a \emph{bridge method} that the compiler generates in order to guarantee
 that all calls to the erased signature \<accept(BigInteger,PayableContract,Offer)> actually
 get forwarded to the first, redefined \<accept>. It casts its \<buyer> argument
 into \<TendermintED25519Validator> and calls the first \<accept>. This

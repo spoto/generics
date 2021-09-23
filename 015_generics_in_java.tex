@@ -11,7 +11,7 @@ This implementation is based on the type \emph{erasure} mechanism, where the gen
 is replaced by the upwards bound of each instance, mostly often \<Object>.
 Even if the heterogeneous approach is the safest, it is rarely applied in particular
 in resource-constrained applications, because the code size may dramatically increase
-because of duplicated~\cite{generics_embedded_systems}. For code in blockchain,
+because of duplication~\cite{generics_embedded_systems}. For code in blockchain,
 the heterogeneous approach obliges one to reinstall all instantiations of the generic code,
 with extra costs of gas, which makes it impractical.
 Conversely, the homogeneous approach ensures a smaller consumption of resources.
