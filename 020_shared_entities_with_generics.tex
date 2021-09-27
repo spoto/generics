@@ -51,7 +51,7 @@ public interface SharedEntity<S extends PayableContract,
     \end{lstlisting}
   \end{center}
   \caption{A simplified part of our shared entity interface.
-  Its full code is available at \url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/dao/SharedEntity.java}.}\label{fig:shared_entity}
+  Its full code is available at \textsf{\url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/dao/SharedEntity.java}}.}\label{fig:shared_entity}
 \end{figure}
 
 In general, two concepts are specific to each implementation of shared entities:
@@ -111,7 +111,7 @@ This property is important since it states that we can trust the type \<S> of
 the shareholders: if we create a \<SharedEntity> and fix a specific type \<S>
 for its shareholders, then only instances of \<S> will actually manage to become shareholders.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
 public class SimpleSharedEntity
@@ -182,7 +182,7 @@ public class SimpleSharedEntity
     \end{lstlisting}
   \end{center}
   \caption{A simplified part of our implementation of the shared entity interface.
-  Its full code is available at \url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/dao/SimpleSharedEntity.java}.}\label{fig:simple_shared_entity}
+  Its full code is available at \textsf{\url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/dao/SimpleSharedEntity.java}}.}\label{fig:simple_shared_entity}
 \end{figure}
 
 Fig.~\ref{fig:simple_shared_entity} shows our implementation of the \<SharedEntity> interface
