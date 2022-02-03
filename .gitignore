@@ -47,6 +47,7 @@
 ## Build tool directories for auxiliary files
 # latexrun
 latex.out/
+camera_ready/
 
 ## Auxiliary and intermediate files from other packages:
 # algorithms
