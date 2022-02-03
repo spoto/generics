@@ -1,0 +1,244 @@
+\section{Shared Entities using Generics}\label{sec:shared_entities}
+
+A \emph{shared entity} is concept that often arises in blockchain
+applications. Namely, a shared entity is something divided into \emph{shares}. Participants,
+that hold shares, are called \emph{shareholders} and can dynamically
+sell and buy shares. An example of a shared entity is a corporation,
+where shares represent units of possess of the company. Another example is
+a voting community, where shares represent the voting power of each given voter.
+A further example are the validator nodes of a proof of stake blockchain,
+where shares represent their voting power and remuneration percentage.
+
+\begin{figure}[ht]
+  \begin{center}
+    \begin{lstlisting}[language=Takamaka]
+public interface SharedEntity<S extends PayableContract,
+                              O extends Offer<S>> {
+
+  @View
+  BigInteger sharesOf(S shareholder);
+
+  @FromContract(PayableContract.class) @Payable
+  void place(BigInteger amount, O offer);
+
+  @FromContract(PayableContract.class) @Payable
+  void accept(BigInteger amount, S buyer, O offer);
+
+  List<S> getShareholders();
+
+  class Offer<S extends PayableContract> extends Storage {
+    public final S seller;
+    public final BigInteger sharesOnSale;
+    public final BigInteger cost;
+    public final long expiration;
+
+    public Offer
+        (S seller, BigInteger sharesOnSale, 
+         BigInteger cost, long duration) {
+
+      this.seller = seller;
+      this.sharesOnSale = sharesOnSale;
+      this.cost = cost;
+      this.expiration = now() + duration;
+    }
+
+    @View
+    public boolean isOngoing() {
+      return now() <= expiration;
+    }
+  }
+}
+    \end{lstlisting}
+  \end{center}
+  \caption{A simplified part of our shared entity interface.
+  Its full code is available at \textsf{\url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/dao/SharedEntity.java}}.}\label{fig:shared_entity}
+\end{figure}
+
+In general, two concepts are specific to each implementation of shared entities:
+who are the potential shareholders and how offers for selling shares work.
+Therefore, one can parameterize the interface of a shared entity with two type variables:
+\<S> is the type of the shareholders and \<O> is the type of the offers for selling shares.
+
+We are developing for the Hotmoka blockchain, that uses smart contracts written in a subset
+of Java called Takamaka.
+Fig.~\ref{fig:shared_entity} shows a simplification of our interface for shared entities.
+It includes an inner class \<Offer> that models sale offers:
+it specifies who is the seller of the shares,
+how many shares are being sold, the requested price and the expiration of the offer.
+Method \<isOngoing> checks if an offer has not expired yet.
+Implementations can subclass \<Offer> if they need more specific offers.
+By using class \<Offer>, the \<SharedEntity> interface specifies four methods.
+Method \<sharesOf> allows one to know how many shares a potential \<shareholder> (of type \<S>) holds.
+It is annotated as \<@View>. In Takamaka, this means that its execution can be performed
+\emph{for free}, without paying gas, since it has no side-effects. Who wants to sell
+(some of) its shares calls method \<place> with a sale \<offer>.
+This method is annotated as \<@Payable> since
+implementations are allowed to require a payment of \<amount> coins for managing the sale.
+Who buys the shares calls method \<accept> with the accepted \<offer>
+and with itself as \<buyer> (the reason will be explained soon)
+and becomes a new shareholder or increases
+its cumulative number of shares (if it was a shareholder already).
+Also this method is \<@Payable>, since its caller must pay \<amount> $\ge$ \<offer.cost>
+coins to the seller.
+This means that shareholders must be able to receive payments and that
+is why \<S extends PayableContract>: the \<PayableContract>s, in Takamaka, are those that can receive
+payments.
+Method \<getShareholders> yields the list of the current shareholders of the entity.
+It is not \<@View>, since it creates a new list, which is a side-effect.
+
+The annotation \<@FromContract> on both \<place> and \<accept> enforces that only
+contracts can call these methods.
+These callers must be (old or new) shareholders,
+hence they must have type \<S>. In Takamaka, this could be written
+as \<@FromContract(S.class)>. Unfortunately, Java does not allow a generic type variable \<S>
+in \<S.class>. Due to this syntactical limitation of Java,
+the best we could write in Fig.~\ref{fig:shared_entity} is \<@FromContract(PayableContract.class)>,
+which allows \emph{any} \<PayableContract> to call these methods, not just those of type \<S>.
+Since the syntax of the language does not support our abstraction, we will have to
+program explicit dynamic checks in code, as shown later, and this will be the reason of the
+parameter \<buyer> in \<accept>.
+
+Let us state an important property about shared entities:
+
+%\begin{tcolorbox}
+  \begin{center}\emph{Consistency of Shareholders}\end{center}
+  If \<se> is a {\codesize\texttt{SharedEntity<S,O>}}
+  then the elements contained in the list \<se.getShareholders()> have type \<S>.
+%\end{tcolorbox}
+
+\noindent
+This property is important since it states that we can trust the type \<S> of
+the shareholders: if we create a \<SharedEntity> and fix a specific type \<S>
+for its shareholders, then only instances of \<S> will actually manage to become shareholders.
+
+\begin{figure}[t]
+  \begin{center}
+    \begin{lstlisting}[language=Takamaka]
+public class SimpleSharedEntity
+      <S extends PayableContract,O extends Offer<S>>
+      extends Contract
+      implements SharedEntity<S,O> {
+
+  private final StorageTreeMap<S,BigInteger> shares = 
+     new StorageTreeMap<>();
+  private final StorageSet<O> offers = 
+     new StorageTreeSet<>();        
+
+  public SimpleSharedEntity
+    (S[] shareholders, BigInteger[] shares) {
+    require(shareholders.length == shares.length, 
+            "length mismatch");
+    for (int pos = 0; pos < shareholders.length; pos++)
+      addShares(shareholders[pos], shares[pos]);
+  }
+
+  @Override @View
+  public final BigInteger sharesOf(S shareholder) {
+    return shares.getOrDefault
+      (shareholder, BigInteger.ZERO);
+  }
+
+  @Override @FromContract(PayableContract.class) @Payable
+  public void place(BigInteger amount, O offer) {
+    require(offer.seller == caller(), 
+            "not authorized to sell");
+    require(shares.containsKey(offer.seller), 
+            "only shareholders can sell");
+    require(sharesOf(offer.seller)
+        .subtract(sharesOnSaleOf(offer.seller))
+        .compareTo(offer.sharesOnSale) >= 0, 
+        "not enough shares to sell");
+    offers.add(offer);
+  }
+
+  @Override @FromContract(PayableContract.class) @Payable
+  public void accept(BigInteger amount, S buyer, O offer) {
+    require(caller() == buyer, 
+            "only the future owner can buy the shares");
+    require(offers.contains(offer), "unknown offer");
+    require(offer.isOngoing(), 
+            "the sale offer is not ongoing anymore");
+    require(offer.cost.compareTo(amount) <= 0, 
+            "not enough money");
+    offers.remove(offer);
+    removeShares(offer.seller, offer.sharesOnSale);
+    addShares(buyer, offer.sharesOnSale);
+    offer.seller.receive(offer.cost);
+  }
+
+  private BigInteger sharesOnSaleOf(S shareholder) {
+    return offers.stream()
+      .filter(offer -> offer.seller == shareholder && 
+              offer.isOngoing())
+      .map(offer -> offer.sharesOnSale)
+      .reduce(ZERO, BigInteger::add);
+  }
+
+  @Override
+  public List<S> getShareholders() {
+    return shares.keyList();
+  }
+}
+    \end{lstlisting}
+  \end{center}
+  \caption{A simplified part of our implementation of the shared entity interface.
+  Its full code is available at \textsf{\url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/dao/SimpleSharedEntity.java}}.}\label{fig:simple_shared_entity}
+\end{figure}
+
+Fig.~\ref{fig:simple_shared_entity} shows our implementation of the \<SharedEntity> interface
+in Fig.~\ref{fig:shared_entity}
+by using two fields: \<shares> maps each shareholder to its amount of shares and
+\<offers> collects the offers that have been placed.
+The constructor initially populates the map \<shares>.
+Method \<sharesOf> simply accesses
+\<shares>, by using zero as default. Method \<place> requires its \<caller()> to be
+the seller identified in the \<offer>. This forbids shareholders to sell shares on behalf of others.
+Moreover, this guarantees that the caller has type \<S>, like \<offer.seller>.
+As we said before, this cannot be expressed with the syntax of the language.
+Method \<place> further requires the seller to be a shareholder with at least \<offer.sharesOnSale>
+shares not yet placed on sale. This forbids to oversell more shares
+than one owns. At the end, \<place> adds the \<offer> to the set of \<offers>.
+Method \<accept> requires that who calls the method must be \<buyer>. Hence, successful
+calls to \<accept> can only pass the same caller for \<buyer>. This is a trick to enforce the
+caller to have type \<S>, since the syntax of the language does not allow one to express it,
+as we explained before. Then \<accept> requires the \<offer> to exist, to be still ongoing
+and to cost no more than the \<amount> of money provided to \<accept>. If that is the case,
+the \<offer> is removed from the \<offers>, shares are moved from seller to buyer (code not
+shown in Fig.~\ref{fig:simple_shared_entity}) and the seller of the \<offer>
+receives the required price \<offer.cost>.
+Method \<getShareholders()> yields the list of the keys in the domain of map \<shares>.
+
+It turns out that the \emph{Consistency of Shareholders} property holds if Java source code
+creates and populates \<SimpleSharedEntity>s.
+Namely, the code in Fig.~\ref{fig:simple_shared_entity}
+does not use unchecked casts, hence it is strongly-typed~\cite{NaftalinW06} and
+the map \<shares> actually holds values of type \<S> in its domain, only.
+For this consistency result, we had to pay the price
+of the dummy \<buyer> argument for method \<accept>. Without that argument,
+\emph{Consistency of Shareholders} would not hold, since we could only write
+\<addShares((S) caller(), offer.sharesOnSale)> in the implementation of \<accept> in
+Fig.~\ref{fig:simple_shared_entity}, with an unchecked cast that makes the code
+non-strongly-typed. In that case, also contracts not of type \<S> could call \<accept>
+and become shareholders.
+
+There is, however, a problem with the reasoning
+in the previous paragraph. Namely, absence of unchecked
+operations guarantees strong typing of Java \emph{source} code. But what is installed
+and executed in blockchain is the Java bytecode that has been derived from
+the compilation of the code in Fig.~\ref{fig:simple_shared_entity}.
+Malicious users might install in blockchain some manually crafted bytecode,
+not derived from its Java source code compiled together with the source code
+in Fig.~\ref{fig:simple_shared_entity}.
+That crafted code might
+call the methods of \<SimpleSharedEntity>s in order to attack
+that contract. In particular,
+the signature of method \<accept> declares a parameter \<buyer> of type \<S> at source code level, but
+its compilation into Java bytecode declares an erased
+parameter \<buyer> of type \<PayableContract> instead.
+It follows that an attacker can install in blockchain a snippet of bytecode that calls
+\<accept> and passes \emph{any} \<PayableContract>, not only those that are instances of \<S>:
+the \emph{Consistency of Shareholders} property is easily violated at bytecode level.
+
+In general, the problem arises whenever a method declares a formal parameter of generic type,
+such as \<buyer> in method \<accept> of Fig.~\ref{fig:shared_entity}. Next section shows
+the actual significance of the consequent security risk.
