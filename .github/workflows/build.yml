@@ -19,8 +19,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Compile paper
         uses: xu-cheng/latex-action@v2
-        working_directory: ./bcca_2021
         with:
+          working_directory: ./bcca_2021
           root_file: 000_generics.tex
       - name: Check pdf files
         run: |
