@@ -17,21 +17,30 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v2
-      - name: Compile paper
+      - name: Compile BCCA 2021 paper
         uses: xu-cheng/latex-action@v2
         with:
           working_directory: ./bcca_2021
-          root_file: 000_generics.tex
+          root_file: 000_main.tex
+      - name: Compile Cluster Computing paper
+        uses: xu-cheng/latex-action@v2
+        with:
+          working_directory: ./cluster_computing
+          root_file: 000_main.tex
       - name: Check pdf files
         run: |
-          file bcca_2021/000_generics.pdf | grep -q ' PDF '
+          file bcca_2021/000_main.pdf | grep -q ' PDF '
+          file cluster_computing/000_main.pdf | grep -q ' PDF '
       - name: Rename pdf files
         run: |
-          mv bcca_2021/000_generics.pdf bcca_2021/bcca_2021.pdf
+          mv bcca_2021/000_main.pdf bcca_2021/bcca_2021.pdf
+          mv cluster_computing/000_main.pdf cluster_computing/cluster_computing.pdf
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
-          name: bcca_2021
+          name: papers_and_presentations
           path: |
             bcca_2021/bcca_2021.pdf
-        if: always()
+            cluster_computing/cluster_computing.pdf
+            presentation/bcca_2021_presentation.pdf
+       if: always()
