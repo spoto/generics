@@ -31,43 +31,6 @@ Tendermint engine.
 \begin{figure}[t]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public abstract class Validator 
-       extends ExternallyOwnedAccount {
-
-  public Validator(String publicKey) {
-    super(publicKey);
-  }
-
-  @View
-  public abstract String id();
-}
-
-public final class TendermintED25519Validator 
-       extends Validator {
-
-  // the first 40 characters of the hexadecimal representation
-  // of the sha256 hashing of the public key bytes
-  private final String id;
-
-  public TendermintED25519Validator(String publicKey) {
-    super(publicKey);
-    this.id = /* derived from publicKey as in the comment for id above */
-  }
-
-  @Override @View
-  public final String id() {
-    return id;
-  }
-}
-    \end{lstlisting}
-  \end{center}
-  \caption{The representation, in Hotmoka, of a validator of a Hotmoka blockchain based on Tendermint.
-  Its full code is available at \textsf{\url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/governance/tendermint/TendermintED25519Validator.java}}.}\label{fig:validator}
-\end{figure}
-
-\begin{figure}[t]
-  \begin{center}
-    \begin{lstlisting}[language=Takamaka]
 public abstract class 
     AbstractValidators<V extends Validator>
     extends SimpleSharedEntity<V, Offer<V>> {
