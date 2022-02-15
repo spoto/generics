@@ -1,79 +1,59 @@
 \section{An Attack to the Shared Entities Contract}\label{sec:attack}
 
-This paper originated from an actual security issue that we found in our code
-that used shared entities in order to model the validators of a blockchain.
-Namely, the Hotmoka blockchain is built over Tendermint~\cite{Kwon14}, a
-generic engine for replicating an application over a network of nodes. In our case,
-the application is the executor of smart contracts in Java, such as that in
-Fig.~\ref{fig:simple_shared_entity}. Tendermint is based on a proof of stake
-consensus, which means that a selected dynamic subset of the nodes is in charge of
-validating the transactions and voting their acceptance. In general, Hotmoka
-models validator nodes as \<Validator> objects, that are externally owned accounts
-with an extra identifier. In the specific case of a Hotmoka blockchain built over Tendermint,
-validators are \<TendermintED25519Validator> objects whose
-identifier is derived from their ed25519 public key (see Fig.~\ref{fig:validator}).
-This identifier is public information, reported in the blocks or easily eavesdropped.
-Tendermint applications can implement their own
-policy for rewarding or changing the validators' set dynamically.
-The \<AbstractValidators> class implements the validators' set
-and the distribution of the reward and is a subclass of \<SimpleSharedEntity>
-(see Fig.~\ref{fig:abstract_validators}).
-Shares are voting power in this case.
-Its subclass \<TendermintValidators> restricts the type \<S> of the shareholders
-to \<TendermintED25519Validator>.
-At each block committed, Hotmoka calls the \<reward> method of \<AbstractValidators>
-in order to reward the validators that behaved correctly
-and punish those that misbehaved, possibly removing them from the validators' set.
-They are specified by two strings
-that contain the identifiers of the validators, as provided by the underlying
-Tendermint engine.
+Let us state an important property about shared entities:
+%
+\vspace{2ex}
+\begin{mdframed}[leftmargin=10pt,rightmargin=10pt]
+  \begin{center}\emph{Consistency of Shareholders}\end{center}
+  \noindent
+  If \<se> is a {\codesize\texttt{SharedEntity<S,O>}}
+  then \<se.getShareholders()> contains only elements of type \<S>.
+\end{mdframed}
+\vspace{2ex}
+%
+This property is important since it states that we can trust the type \<S> of
+the shareholders: if one creates a \<SharedEntity> and fixes a specific type \<S>
+for its shareholders, then only instances of \<S> will actually manage to become shareholders.
 
-\begin{figure}[t]
-  \begin{center}
-    \begin{lstlisting}[language=Takamaka]
-public abstract class 
-    AbstractValidators<V extends Validator>
-    extends SimpleSharedEntity<V, Offer<V>> {
+It turns out that the \emph{Consistency of Shareholders} property holds
+for instances of the class \<SimpleSharedEntity> in Fig.~\ref{fig:simple_shared_entity}.
+Namely, that class does not use unchecked casts, hence it is strongly-typed~\cite{NaftalinW06} and
+its map \<shares> actually holds values of type \<S> in its domain, only.
+For this consistency result, we had to pay the price
+of the dummy \<buyer> argument for the method \<accept>
+of the shared entities. Without that argument, the
+\emph{Consistency of Shareholders} property would not hold, since we could only write
+\<addShares((S) caller(), offer.sharesOnSale)> in the implementation of \<accept> in
+Fig.~\ref{fig:simple_shared_entity}, with an unchecked cast that makes its code
+non-strongly-typed. In that case, also contracts not of type \<S> could call \<accept>
+and become shareholders.
 
-  public AbstractValidators
-    (V[] validators, BigInteger[] powers) {
-    super(validators, powers);
-  }
+There is, however, a problem with the reasoning
+in the previous paragraph. Namely, absence of unchecked
+operations guarantees strong typing of Java \emph{source} code. But what is installed
+and executed in blockchain is the Java bytecode that has been derived from
+the compilation of the code in Fig.~\ref{fig:simple_shared_entity}.
+Malicious users might install in blockchain some manually crafted bytecode,
+not derived from its Java source code compiled together with the source code
+in Fig.~\ref{fig:simple_shared_entity}.
+That crafted code might
+call the methods of \<SimpleSharedEntity>s in order to attack
+that contract. In particular,
+the signature of method \<accept> declares a parameter \<buyer> of type \<S> at source code level, but
+its compilation into Java bytecode declares an erased
+parameter \<buyer> of type \<PayableContract> instead.
+It follows that an attacker can install in blockchain a snippet of bytecode that calls
+\<accept> and passes \emph{any} \<PayableContract>, not only those that are instances of \<S>:
+the \emph{Consistency of Shareholders} property is easily violated at bytecode level.
 
-  public void reward
-    (String behaving, String misbehaving, 
-     BigInteger gasConsumed) { ... }
-}
+In general, the problem arises whenever a method declares a formal parameter of generic type,
+such as \<buyer> in method \<accept> of Fig.~\ref{fig:shared_entity}. Next section shows
+the actual significance of the consequent security risk.
 
-public class TendermintValidators
-    extends AbstractValidators<TendermintED25519Validator> {
-
-  public TendermintValidators
-        (TendermintED25519validator[] validators, 
-         BigInteger[] powers) {
-    super(validators, powers);
-  }
-}
-    \end{lstlisting}
-  \end{center}
-  \caption{The shared entity of the validators of a Hotmoka blockchain.
-  Its full code is available at \textsf{\url{https://github.com/Hotmoka/hotmoka/blob/master/io-takamaka-code/src/main/java/io/takamaka/code/governance/AbstractValidators.java}}.}\label{fig:abstract_validators}
-\end{figure}
-
-Since \<SimpleSharedEntity> allows shares to be sold and bought, this holds for
-its \<TendermintValidators> subclass as well: the set of validators
-is dynamic and it is possible to sell and buy voting power in order to invest in the blockchain
-and earn rewards at each block committed. At block creation time,
-Hotmoka calls method \<getShareholders> inherited from
-\<SimpleSharedEntity> and informs the
-underlying Tendermint engine about the identifiers of the validator nodes for the next blocks.
-Tendermint expects such validators to mine and vote the subsequent blocks, until a change in the
-validators' set occurs.
-
-It is important that the \emph{Consistency of Shareholders} property holds
-for \<TendermintValidators>: its shareholders
+In particular, it is important that the \emph{Consistency of Shareholders} property holds
+for the subclass \<TendermintValidators>: its shareholders
 must be \<TendermintED25519Validator>s (as declared in the generic
-signature of \<TendermintValidators>) that enforce a
+signature of \<TendermintValidators> in Fig.~\ref{fig:validators}) that enforce a
 match between their public key, that identifies who can spend the rewards sent to the validator,
 and their Tendermint identifier, that identifies which node of the blockchain
 must do the validation work (see how the constructor initializes \<this.id> in
@@ -91,14 +71,14 @@ Namely, an \<attacker> (of type \<Attacker>) can only become shareholder
 by accepting an ongoing sale \<offer> of shares through a call to
 \<tv.accept(offer.cost, attacker, offer)> (see Fig.~\ref{fig:simple_shared_entity}).
 This is impossible at source level, where that call does \emph{not} compile, since \<attacker> has type \<Attacker> that
-is not an instance of \<S>, which has been set to \<TendermintED25519Validator>.
+is not an instance of \<V>, which has been set to \<TendermintED25519Validator>.
 But a Hotmoka blockchain contains only the bytecode of \<SimpleSharedEntity>,
 where the signature of \<accept> has been erased into
 \<accept(BigInteger amount, PayableContract buyer, Offer offer)>.
 Hence a blockchain transaction that invokes \<tv.accept(offer.cost, attacker, offer)>
 at bytecode level
 \emph{does} succeed, since \<attacker> is an externally owned account and all such accounts
-are instances of \<PayableContract>.
+are instances of \<PayableContract> (Fig.~\ref{fig:hierarchy-entities}).
 That transaction adds \<attacker> to the shareholders of \<tv>,
 therefore violating the \emph{Consistency of Shareholders} property and allowing
 validator's slavery.
@@ -119,6 +99,6 @@ public class Attacker extends ExternallyOwnedAccount {
 }
     \end{lstlisting}
   \end{center}
-  \caption{An attacker that exploits a blockchain node for validation and fraudolently earns the rewards of the work of that node.}\label{fig:attacker}
+  \caption{An attacker that exploits the work of a blockchain validator node and fraudolently earns the rewards of that work.}\label{fig:attacker}
 \end{figure}
 
