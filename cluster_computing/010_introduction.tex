@@ -73,11 +73,15 @@ bytecode languages for future smart contract languages, by
 learning from the weaknesses of Java bytecode.
 
 The remainder of this paper is organized as follows.
-Sec..~\ref{sec:java_generics} discusses the management of generics in Java.
-Sec.~\ref{sec:shared_entities} introduces our real-life Java smart
-contract that uses generics. Sec.~\ref{sec:attack} shows that a na\"{i}ve
-deployment of a subclass of that contract leads to a code vulnerability.
+Sec.~\ref{sec:java_generics} discusses the management of generics in Java.
+Sec.~\ref{sec:takamaka} presents the basic notions about the Takamaka language for smart contracts in Java.
+Sec.~\ref{sec:shared_entities} shows our real-life Java smart
+contracts shared entities, that use generic types.
+Sec.~\ref{sec:validators} shows the instantiation of the shared entities to implement the validators' set
+of a proof of stake blockchain.
+Sec.~\ref{sec:attack} shows that a na\"{i}ve
+deployment of a subclass of the validators' set leads to a code vulnerability.
 Sec.~\ref{sec:fix} presents a fix to that vulnerability.
-Sec.~\ref{sec:related_work} discusses some related work and, finally,
+Sec.~\ref{sec:related_work} discusses some related work.
 Sec.~\ref{sec:conclusion} concludes.
 

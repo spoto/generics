@@ -9,7 +9,7 @@ Conversely, the homogeneous approach is that provided by Java and .Net; in this 
 only one instance of the code is maintained and shared by all generic instances.
 This implementation is based on the type \emph{erasure} mechanism, where the generic parameter
 is replaced by the upwards bound of each instance, mostly often \<Object>.
-Even if the heterogeneous approach is the safest, it is rarely applied in particular
+Even though the heterogeneous approach is the safest, it is rarely applied in particular
 in resource-constrained applications, because the code size may dramatically increase
 because of duplication~\cite{generics_embedded_systems}. For code in blockchain,
 the heterogeneous approach obliges one to reinstall all instantiations of the generic code,
