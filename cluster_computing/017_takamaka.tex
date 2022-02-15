@@ -57,7 +57,7 @@ is used, then each validator node of the blockchain must specify a
 banking account where the validation rewards of the node get accumulated (see Fig.~\ref{fig:validator}).
 It is a special externally owned account, with an extra \<id> method that provides the
 identifier of the validator node inside the blockchain network. This identifier depends from the
-specific blockchain implementation.
+specific network.
 For instance, the subclass
 \<io.takamaka.code.governance.tendermint.TendermintED25519Validator>
 implements \<id> as for the Tendermint blockchain engine, that is,
