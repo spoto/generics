@@ -1,44 +1,38 @@
 \section{Related Work}\label{sec:related_work}
 
-% \todo{Forse questa parte va spostata.}
-% 
-% 
-% \textbf{Compilation of generics --}
-% Generics is a way for writing code parametrized by type, in other words 
-% a same piece of code can be written by using a type placehorder 
-% (a \emph{type parameter}) and then instantiated for specific,
-% concrete types. There exists two common ways to implement generics in 
-% a programming language, that are often described in literature~\cite{generics_categories}
-%  as \emph{heterogeneous} and \emph{homogeneous}. In the heterogeneous 
-% approach the code is specialized for each instance
-% of the generic parameter; this is the approach adopted by C++ \emph{templates}.
-% Conversely, the homogeneous approach is the one provided by Java and .Net; 
-% in this case, only one instance of the code is maintained and shared by 
-% all generic instances.
-% This implementation is based on the type \emph{erasure} mechanism, where the 
-% generic parameter is replaced by the upwards bound of each instance, most 
-% often \<Object>.
-% Even if the heterogeneous approach is the safest, it is rarely applied in particular
-% in resource-constrained applications, because the code size may dramatically increase
-% as some code is duplicated~\cite{generics_embedded_systems}. For code in blockchain,
-% the heterogeneous approach obliges one to reinstall all instantiations of the 
-% generic code, with extra costs of gas.
-% Conversely, the homogeneous approach ensures a smaller consumption
-% of resources but can lead to the problems described in this paper. \\
-% 
-% \textbf{Smart contracts vulnerabilities --}
+Generics is a way for writing code parametrized by type, in other words 
+a same piece of code can be written by using a type placehorder 
+(a \emph{type parameter}) and then instantiated for specific,
+concrete types. There exists two common ways to implement generics in 
+a programming language, that are often described in literature~\cite{generics_categories}
+as \emph{heterogeneous} and \emph{homogeneous}. In the heterogeneous 
+approach, the code is specialized for each instance
+f the generic parameter; this is the approach adopted by C++ \emph{templates}.
+Conversely, the homogeneous approach is the one provided by Java and .Net; 
+in this case, only one instance of the code is maintained and shared by 
+all generic instances.
+This implementation is based on the type \emph{erasure} mechanism, where the 
+generic parameter is replaced by the upwards bound of each instance, most 
+often \<Object>.
+Even if the heterogeneous approach is the safest, it is rarely applied in particular
+in resource-constrained applications, because the code size may dramatically increase
+as some code is duplicated~\cite{generics_embedded_systems}. For code in blockchain,
+the heterogeneous approach obliges one to reinstall all instantiations of the 
+generic code, with extra costs of gas.
+Conversely, the homogeneous approach ensures a smaller consumption
+of resources but can lead to the problems described in this paper.
 
 It has been estimated that, on average, software developers make from 100 to 150 errors
 for every thousand lines of code~\cite{software_engineering}.
 In 2002, the National Institute of Standards and Technology (NIST) estimates that the economic
 costs of faulty software in the US is about tens of billions of dollars per year and represent
-approximately just under 1 percent of the Nation's gross domestic product.
+approximately just under one percent of the Nation's gross domestic product.
 The effects induced by errors in software development are even worse when such pieces of software
 are smart contracts. Indeed, it is usually impossible to change a smart contract once
 it has been deployed, the immutability being one of its main characteristics, so that
 errors are treated as intended behaviours. Moreover, smart contracts often store and
 manage critical data such as money, digital assets and identities. For this reason, smart contracts
-vulnerabilities and correctness are becoming important in literature\,\cite{smart_contracts_verification}. Possible solutions can be
+vulnerabilities and correctness are becoming important in literature~\cite{smart_contracts_verification}. Possible solutions can be
 classified into three main categories: (i) static analysis of EVM bytecode,
 (ii) automatic rectification of EVM bytecode and (iii) development of new languages
 for smart contracts.

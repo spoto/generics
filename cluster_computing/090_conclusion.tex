@@ -1,10 +1,15 @@
 \section{Conclusion}\label{sec:conclusion} 
 
 This paper has shown that generic types can be useful in the definition
-of smart contracts, but introduce risks of security since in many
-programming languages, including Java, they get erased at compile time
+of smart contracts and can simplify the development of rather complex
+code such as those for shared entities, and support code reuse, for
+instance to implement the validators set of a blockchain network.
+However, this paper has shown that generic types
+introduce risks of security as well.
+Namely, many
+programming languages, including Java, erase them at compile time
 into types that might be too permissive for low-level calls, such as
-those that start blockchain transactions. Note that using a programming
+those that are started by blockchain transactions. Note that the use of a programming
 language without generics is not the solution: Solidity has no generics
 and consequently erases \emph{all} reference types into \<address>.
 That is the worst possible erasure.
@@ -12,8 +17,8 @@ That is the worst possible erasure.
 The solution in this paper has been to redefine a method with an argument
 of generic type in such a way to call its superclass
 (see \<accept> in Fig.~\ref{fig:solution}). This fixes the security risk,
-but cannot be regarded as an elegant solution. It is just a trick that
-works because it forces the compiler to generate some kind of bytecode.
+but cannot be regarded as the definite solution to the problem. It is just a trick that
+works because it forces the compiler to generate some specific kind of bytecode.
 A \emph{smarter} compiler might recognize the redefined \<accept> as
 \emph{useless} and just remove it. This would recreate the issue that
 we have just solved. That is, our solution works only for the way
@@ -27,8 +32,8 @@ that are not mandatory and are ignored by the Java virtual machine
 that runs the bytecode. The same consideration might be applied beyond
 generics: many features of modern programming
 languages have no direct low-level
-counterpart but are implemented via instrumentation, from
-inner classes to closures. This is fine at source level, but allows
+counterpart but are implemented via instrumentation. Examples are
+inner classes and closures (lambda expressions). This is fine at source level, but allows
 low-level calls to easily circumvent
 the encapsulation guarantees of the language. When embedded in a permissionless
 blockchain, such features become dangerous attack surfaces.
