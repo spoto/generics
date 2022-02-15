@@ -267,9 +267,10 @@ TSWLatexianTemp*
 # TeXnicCenter
 *.tps
 
-# auto folder when using emacs and auctex
+# auto folder and autosaves when using emacs and auctex
 ./auto/*
 *.el
+*~
 
 # expex forward references with \gathertags
 *-tags.tex
