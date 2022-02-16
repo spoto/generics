@@ -93,10 +93,11 @@
 \usepackage{listings, xcolor}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
-
 \renewcommand{\UrlFont}{\ttfamily\codesize}
 
 \definecolor{verylightgray}{rgb}{.97,.97,.97}
+
+\newcommand{\ltiny}{\fontsize{8}{10}\selectfont}
 
 \lstdefinelanguage{Takamaka}{
         keywords=[1]{abstract, break, case, catch, class, continue, default, do
@@ -120,20 +121,20 @@
         language=Takamaka,
         backgroundcolor=\color{verylightgray},
         extendedchars=true,
-        basicstyle=\scriptsize\ttfamily,
+        basicstyle=\ltiny\ttfamily,%\scriptsize\ttfamily
         showstringspaces=false,
         showspaces=false,
         numbers=none,
-        numberstyle=\scriptsize,
+        numberstyle=\ltiny,%\scriptsize,
         numbersep=9pt,
         tabsize=2,
         breaklines=true,
         showtabs=false,
-        captionpos=b
+        captionpos=b      
 }
 
 \lstdefinelanguage{JavaBytecode}{
-        keywords=[1]{abstract, class, extends, public, private, protected}, % generic keywords
+        keywords=[1]{abstract, class, extends, public, private, protected}, %generic keywords
         keywordstyle=[1]\color{blue}\bfseries,
         keywords=[2]{boolean, int, long, float, double, byte, short, char, void}, % types; money and time units
         keywordstyle=[2]\color{teal}\bfseries,
@@ -153,11 +154,11 @@
         language=JavaBytecode,
         backgroundcolor=\color{verylightgray},
         extendedchars=true,
-        basicstyle=\scriptsize\ttfamily,
+        basicstyle=\ltiny\ttfamily,
         showstringspaces=false,
         showspaces=false,
         numbers=none,
-        numberstyle=\scriptsize,
+        numberstyle=\ltiny,
         numbersep=9pt,
         tabsize=2,
         breaklines=true,
