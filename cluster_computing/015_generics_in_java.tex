@@ -27,7 +27,14 @@ while \<O> can only be a subtype of {\codesize\texttt{Offer<S>}}. If we check th
 generated for \<SharedEntity>, we will see that \<accept> is declared, in bytecode, as
 \<void accept(BigInteger amount, PayableContract buyer, Offer offer)>, that is,
 the two type variables \<S> and \<O> have been \emph{erased} and replaced with their
-respective upper bound.
+respective upper bound, as illustrated in Fig.\,\ref{figure.java_generics_erasure}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.9\linewidth]{figures/java_generics_erasure}
+\caption{Example of generics implementation by erasure in Java.}
+\label{figure.java_generics_erasure}
+\end{figure}
 
 Erasure weakens the type information of the compiled code. It is the responsibility of the
 compiler to guarantee that types are still respected, in all implementations of \<SharedEntity>.

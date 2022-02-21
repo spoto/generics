@@ -27,7 +27,7 @@ non-primitive values are referenced through a very general
 into \<child(address p, uint256 n) returns address>, losing most
 type information~\cite{CrafaPZ19}.
 Since, at run time, it is the bytecode that gets executed,
-everything can be passed for \<p>, not just a \<Person> instance.
+everything can be passed for \<p>, not just a \<Person> instance, as illustrated in Fig.\,\ref{figure.solidity_problem}.
 The compiler cannot even enforce strong typing
 by generating defensive type instance checks and casts, because
 values are unboxed in Ethereum: they have no attached
@@ -42,6 +42,13 @@ objects for \<p>, with arbitrary implementations for their methods,
 which can result in the unexpected execution of
 dangerous code. This actually happened in the case of the infamous DAO hack~\cite{dao16}, that
 costed millions of dollars.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.9\linewidth]{figures/solidity_problem}
+\caption{Example of possible problem that can occur in Solidity due to the absence of a strong typing mechanism.}
+\label{figure.solidity_problem}
+\end{figure}
 
 Strong typing is one of the reasons that push towards the adoption
 of \emph{traditional} programming languages for smart contracts. For instance,
