@@ -50,6 +50,13 @@ In general, the problem arises whenever a method declares a formal parameter of 
 such as \<buyer> in method \<accept> of Fig.~\ref{fig:shared_entity}. Next section shows
 the actual significance of the consequent security risk.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.9\linewidth]{figures/attack}
+\caption{Example of possible attack to a smart contract using Java generics.}
+\label{figure.attack}
+\end{figure}
+
 In particular, it is important that the \emph{Consistency of Shareholders} property holds
 for the subclass \<TendermintValidators>: its shareholders
 must be \<TendermintED25519Validator>s (as declared in the generic

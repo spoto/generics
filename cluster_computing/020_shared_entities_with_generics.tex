@@ -1,6 +1,6 @@
 \section{Shared Entities using Generics}\label{sec:shared_entities}
 
-A \emph{shared entity} is concept that often arises in blockchain
+A \emph{shared entity} is a concept that often arises in blockchain
 applications. Namely, a shared entity is something divided into \emph{shares}. Participants,
 that hold shares, are called \emph{shareholders} and can dynamically
 sell and buy shares. An example of a shared entity is a corporation,
@@ -34,7 +34,8 @@ public interface SharedEntity
     public final BigInteger cost;
     public final long expiration;
 
-    public Offer(S seller, BigInteger sharesOnSale, BigInteger cost, long duration) {
+    public Offer(S seller, BigInteger sharesOnSale, 
+                 BigInteger cost,long duration) {
       this.seller = seller;
       this.sharesOnSale = sharesOnSale;
       this.cost = cost;
@@ -57,6 +58,62 @@ who are the potential shareholders and how offers for selling shares work.
 Therefore, one can parameterize the interface of a shared entity with two type variables:
 \<S> is the type of the shareholders and \<O> is the type of the sale offers of shares.
 
+
+
+\begin{figure}[tp]
+  \begin{center}
+    \begin{lstlisting}[language=Takamaka]
+public class SimpleSharedEntity
+    <S extends PayableContract,O extends Offer<S>>
+    extends PayableContract implements SharedEntity<S,O> {
+
+  private StorageTreeMap<S,BigInteger> shares = new StorageTreeMap<>();
+  private StorageSet<O> offers = new StorageTreeSet<>();
+
+  public SimpleSharedEntity
+      (S shareholder, BigInteger share) {
+    addShares(shareholder, share);
+  }
+
+  @Override @View
+  public final BigInteger sharesOf(S shareholder) {
+    return shares.getOrDefault(shareholder, ZERO);
+  }
+
+  @Override @FromContract(PayableContract.class) @Payable
+  public void place(BigInteger amount, O offer) {
+    require(offer.seller == caller(), "unauthorized");
+    require(shares.containsKey(offer.seller), "unauthor.");
+    require(sharesOf(offer.seller) - sharesOnSaleOf(offer.seller) >= 
+            offer.sharesOnSale, "not enough shares");
+    offers.add(offer);
+  }
+
+  @Override @FromContract(PayableContract.class) @Payable
+  public void accept(BigInteger amount, S buyer, O offer) {
+    require(caller() == buyer, "unauthorized");
+    require(offers.contains(offer), "unknown offer");
+    require(offer.isOngoing(), "the offer is not ongoing");
+    require(offer.cost <= amount, "not enough money");
+    offers.remove(offer);
+    removeShares(offer.seller, offer.sharesOnSale);
+    addShares(buyer, offer.sharesOnSale);
+    offer.seller.receive(offer.cost);
+  }
+
+  @Override @View
+  public final BigInteger sharesOnSaleOf(S shareholder) {
+    return offers.stream()
+     .filter(o -> o.seller == shareholder && o.isOngoing())
+     .map(offer -> offer.sharesOnSale)
+     .reduce(ZERO, BigInteger::add);
+  }
+}
+    \end{lstlisting}
+  \end{center}
+  \caption{A simplified part of our implementation of the shared entity interface.}\label{fig:simple_shared_entity}
+\end{figure}
+
 The \<SharedEntityView> interface at the top of the hierarchy in Fig.~\ref{fig:hierarchy-entities}
 defines the read-only operations on a shared entity. This view is \emph{static}, in the sense that it
 does not specify the operations for transfers of shares. Therefore, its only type parameter is \<S>:
@@ -66,7 +123,7 @@ current shares of the entity (who owns how much). Method \<getShareholders> yiel
 It is not \<@View>, since it creates a new stream, which is a side-effect.
 Method \<isShareholder> checks if an object is a shareholder. Method \<sharesOf> yields
 the number of shares of a shareholder. As typical in Takamaka, a \<snapshot> method allows one
-to create a frozen read-only copy of an entity (in constant time), useful when an enity must be queried from
+to create a frozen read-only copy of an entity (in constant time), useful when an entity must be queried from
 a client without the risk of race conditions if another client is modifying the same entity concurrently.
 
 The \<SharedEntity> subinterface adds methods for transfer of shares
@@ -95,6 +152,13 @@ This means that shareholders must be able to receive payments and that
 is why \<S extends PayableContract>: only \<PayableContract>s are guaranteed to have a
 \<receive> method in Takamaka.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.9\linewidth]{figures/shared_entity}
+\caption{Exemplification of a Takamaka shared entity and of its connections with the objects persisted in the blockchain.}
+\label{figure.shared_entity}
+\end{figure}
+
 As said before, the annotation \<@FromContract> on both \<place> and \<accept> enforces that only
 contracts can call these methods.
 These callers must be (old or new) shareholders,
@@ -106,59 +170,6 @@ which allows \emph{any} \<PayableContract> to call these methods, not just those
 Since the syntax of the language does not support our abstraction, we will have to
 program explicit dynamic checks in code, as shown later, and this will be the reason of the
 parameter \<buyer> in \<accept>.
-
-\begin{figure}[t]
-  \begin{center}
-    \begin{lstlisting}[language=Takamaka]
-public class SimpleSharedEntity
-    <S extends PayableContract,O extends Offer<S>>
-    extends PayableContract implements SharedEntity<S,O> {
-
-  private StorageTreeMap<S,BigInteger> shares = new StorageTreeMap<>();
-  private StorageSet<O> offers = new StorageTreeSet<>();
-
-  public SimpleSharedEntity
-      (S shareholder, BigInteger share) {
-    addShares(shareholder, share);
-  }
-
-  @Override @View
-  public final BigInteger sharesOf(S shareholder) {
-    return shares.getOrDefault(shareholder, ZERO);
-  }
-
-  @Override @FromContract(PayableContract.class) @Payable
-  public void place(BigInteger amount, O offer) {
-    require(offer.seller == caller(), "unauthorized");
-    require(shares.containsKey(offer.seller), "unauthor.");
-    require(sharesOf(offer.seller) - sharesOnSaleOf(offer.seller) >= offer.sharesOnSale, "not enough shares");
-    offers.add(offer);
-  }
-
-  @Override @FromContract(PayableContract.class) @Payable
-  public void accept(BigInteger amount, S buyer, O offer) {
-    require(caller() == buyer, "unauthorized");
-    require(offers.contains(offer), "unknown offer");
-    require(offer.isOngoing(), "the offer is not ongoing");
-    require(offer.cost <= amount, "not enough money");
-    offers.remove(offer);
-    removeShares(offer.seller, offer.sharesOnSale);
-    addShares(buyer, offer.sharesOnSale);
-    offer.seller.receive(offer.cost);
-  }
-
-  @Override @View
-  public final BigInteger sharesOnSaleOf(S shareholder) {
-    return offers.stream()
-     .filter(o -> o.seller == shareholder && o.isOngoing())
-     .map(offer -> offer.sharesOnSale)
-     .reduce(ZERO, BigInteger::add);
-  }
-}
-    \end{lstlisting}
-  \end{center}
-  \caption{A simplified part of our implementation of the shared entity interface.}\label{fig:simple_shared_entity}
-\end{figure}
 
 Fig.~\ref{fig:simple_shared_entity} shows a portion of our \<SimpleSharedEntity>
 implementation of the \<SharedEntity> interface in Fig.~\ref{fig:shared_entity}, that
