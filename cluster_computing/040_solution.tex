@@ -8,7 +8,7 @@ restrictive signature where, in particular, the parameter \<buyer>
 has type \<TendermintED25519Validator>: only that type of accounts
 must be accepted for the validators, consequently banning instances of \<Attacker>.
 
-\begin{figure}[t]
+\begin{figure}[ht]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
 public class TendermintValidators
@@ -95,4 +95,11 @@ parameters. In the future, a compiler might perform this automatically or a stat
 tool might issue a warning when such redefinition is needed. Currently, however, this is
 left to the programmer of the smart contracts, who might overlook the issue
 and give rise to security issues, as shown in Sec.~\ref{sec:attack}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.95\linewidth]{figures/solution}
+\caption{Example of how the proposed solution works at run-time when the \<accept> method is called by a \<Validator> or an \<Attacker>.}
+\label{figure.solution}
+\end{figure}
 
