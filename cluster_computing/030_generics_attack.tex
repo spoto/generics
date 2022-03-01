@@ -46,11 +46,26 @@ It follows that an attacker can install in blockchain a snippet of bytecode that
 \<accept> and passes \emph{any} \<PayableContract>, not only those that are instances of \<S>:
 the \emph{Consistency of Shareholders} property is easily violated at bytecode level.
 
-In general, the problem arises whenever a method declares a formal parameter of generic type,
-such as \<buyer> in method \<accept> of Fig.~\ref{fig:shared_entity}. Next section shows
-the actual significance of the consequent security risk.
+\begin{figure}[t]
+  \begin{center}
+    \begin{lstlisting}[language=Takamaka]
+public class Attacker extends ExternallyOwnedAccount {
 
-\begin{figure}[ht]
+  public Validator(String publicKey) {
+    super(publicKey);
+  }
+
+  @View
+  public String id() {
+    return /* id of the victim blockchain node, unrelated to publicKey */
+  }
+}
+    \end{lstlisting}
+  \end{center}
+  \caption{An attacker that exploits the work of a blockchain validator node and fraudolently earns the rewards of that work.}\label{fig:attacker}
+\end{figure}
+
+\begin{figure}[b]
 \centering
 \includegraphics[width=.9\linewidth]{figures/attack}
 \caption{Example of possible attack to a smart contract using Java generics.}
@@ -76,12 +91,15 @@ Sec.~\ref{sec:shared_entities} asserted that the \emph{Consistency of Shareholde
 property holds, at source level.
 Namely, an \<attacker> (of type \<Attacker>) can only become shareholder
 by accepting an ongoing sale \<offer> of shares through a call to
-\<tv.accept(offer.cost, attacker, offer)> (see Fig.~\ref{fig:simple_shared_entity}).
-This is impossible at source level, where that call does \emph{not} compile, since \<attacker> has type \<Attacker> that
+\<tv.accept(offer.cost, attacker, offer)> (Fig.~\ref{fig:simple_shared_entity}).
+This is impossible at source level (left part of Fig.~\ref{figure.attack}),
+where that call does \emph{not} compile, since \<attacker> has type \<Attacker> that
 is not an instance of \<V>, which has been set to \<TendermintED25519Validator>.
 But a Hotmoka blockchain contains only the bytecode of \<SimpleSharedEntity>,
 where the signature of \<accept> has been erased into
-\<accept(BigInteger amount, PayableContract buyer, Offer offer)>.
+\<accept(BigInteger amount, PayableContract buyer, Offer offer)>
+(see Fig.~\ref{figure.java_generics_erasure} and the right part of
+Fig.~\ref{figure.attack}).
 Hence a blockchain transaction that invokes \<tv.accept(offer.cost, attacker, offer)>
 at bytecode level
 \emph{does} succeed, since \<attacker> is an externally owned account and all such accounts
@@ -89,23 +107,3 @@ are instances of \<PayableContract> (Fig.~\ref{fig:hierarchy-entities}).
 That transaction adds \<attacker> to the shareholders of \<tv>,
 therefore violating the \emph{Consistency of Shareholders} property and allowing
 validator's slavery.
-
-\begin{figure}[t]
-  \begin{center}
-    \begin{lstlisting}[language=Takamaka]
-public class Attacker extends ExternallyOwnedAccount {
-
-  public Validator(String publicKey) {
-    super(publicKey);
-  }
-
-  @View
-  public String id() {
-    return /* id of the victim blockchain node, unrelated to publicKey */
-  }
-}
-    \end{lstlisting}
-  \end{center}
-  \caption{An attacker that exploits the work of a blockchain validator node and fraudolently earns the rewards of that work.}\label{fig:attacker}
-\end{figure}
-

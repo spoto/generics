@@ -16,11 +16,9 @@ public interface SharedEntity
       <S extends PayableContract, O extends Offer<S>>
       extends SharedEntityView<S> {
 
-  @View
-  StorageSetView<O> getOffers();
+  @View StorageSetView<O> getOffers();
 
-  @View
-  BigInteger sharesOnSaleOf(S shareholder);
+  @View BigInteger sharesOnSaleOf(S shareholder);
 
   @FromContract(PayableContract.class) @Payable
   void place(BigInteger ticket, O offer);
@@ -42,8 +40,7 @@ public interface SharedEntity
       this.expiration = now() + duration;
     }
 
-    @View
-    public boolean isOngoing() {
+    @View public boolean isOngoing() {
       return now() <= expiration;
     }
   }
@@ -57,62 +54,6 @@ In general, two concepts are specific to each implementation of shared entities:
 who are the potential shareholders and how offers for selling shares work.
 Therefore, one can parameterize the interface of a shared entity with two type variables:
 \<S> is the type of the shareholders and \<O> is the type of the sale offers of shares.
-
-
-
-\begin{figure}[tp]
-  \begin{center}
-    \begin{lstlisting}[language=Takamaka]
-public class SimpleSharedEntity
-    <S extends PayableContract,O extends Offer<S>>
-    extends PayableContract implements SharedEntity<S,O> {
-
-  private StorageTreeMap<S,BigInteger> shares = new StorageTreeMap<>();
-  private StorageSet<O> offers = new StorageTreeSet<>();
-
-  public SimpleSharedEntity
-      (S shareholder, BigInteger share) {
-    addShares(shareholder, share);
-  }
-
-  @Override @View
-  public final BigInteger sharesOf(S shareholder) {
-    return shares.getOrDefault(shareholder, ZERO);
-  }
-
-  @Override @FromContract(PayableContract.class) @Payable
-  public void place(BigInteger amount, O offer) {
-    require(offer.seller == caller(), "unauthorized");
-    require(shares.containsKey(offer.seller), "unauthor.");
-    require(sharesOf(offer.seller) - sharesOnSaleOf(offer.seller) >= 
-            offer.sharesOnSale, "not enough shares");
-    offers.add(offer);
-  }
-
-  @Override @FromContract(PayableContract.class) @Payable
-  public void accept(BigInteger amount, S buyer, O offer) {
-    require(caller() == buyer, "unauthorized");
-    require(offers.contains(offer), "unknown offer");
-    require(offer.isOngoing(), "the offer is not ongoing");
-    require(offer.cost <= amount, "not enough money");
-    offers.remove(offer);
-    removeShares(offer.seller, offer.sharesOnSale);
-    addShares(buyer, offer.sharesOnSale);
-    offer.seller.receive(offer.cost);
-  }
-
-  @Override @View
-  public final BigInteger sharesOnSaleOf(S shareholder) {
-    return offers.stream()
-     .filter(o -> o.seller == shareholder && o.isOngoing())
-     .map(offer -> offer.sharesOnSale)
-     .reduce(ZERO, BigInteger::add);
-  }
-}
-    \end{lstlisting}
-  \end{center}
-  \caption{A simplified part of our implementation of the shared entity interface.}\label{fig:simple_shared_entity}
-\end{figure}
 
 The \<SharedEntityView> interface at the top of the hierarchy in Fig.~\ref{fig:hierarchy-entities}
 defines the read-only operations on a shared entity. This view is \emph{static}, in the sense that it
@@ -134,7 +75,8 @@ how many shares are being sold, the requested price and the expiration of the of
 Method \<isOngoing> checks if an offer has not expired yet.
 Implementations can subclass \<Offer> if they need more specific offers.
 Offers can be placed on sale
-by calling the \<place> method with a sale \<offer>.
+by calling the \<place> method with a sale \<offer>
+(see Fig.~\ref{figure.shared_entity}).
 This method is annotated as \<@FromContract> since the caller must be
 identified (or otherwise anybody could sell the shares of anybody else) and
 as \<@Payable> so that implementations can require
@@ -170,6 +112,59 @@ which allows \emph{any} \<PayableContract> to call these methods, not just those
 Since the syntax of the language does not support our abstraction, we will have to
 program explicit dynamic checks in code, as shown later, and this will be the reason of the
 parameter \<buyer> in \<accept>.
+
+
+
+\begin{figure}[tp]
+  \begin{center}
+    \begin{lstlisting}[language=Takamaka]
+public class SimpleSharedEntity
+    <S extends PayableContract,O extends Offer<S>>
+    extends PayableContract implements SharedEntity<S,O> {
+
+  private StorageTreeMap<S,BigInteger> shares = new StorageTreeMap<>();
+  private StorageSet<O> offers = new StorageTreeSet<>();
+
+  public SimpleSharedEntity(S shareholder, BigInteger share) {
+    addShares(shareholder, share);
+  }
+
+  @Override @View public final BigInteger sharesOf(S shareholder) {
+    return shares.getOrDefault(shareholder, ZERO);
+  }
+
+  @Override @FromContract(PayableContract.class) @Payable
+  public void place(BigInteger amount, O offer) {
+    require(offer.seller == caller(), "unauthorized");
+    require(shares.containsKey(offer.seller), "unauthor.");
+    require(sharesOf(offer.seller) - sharesOnSaleOf(offer.seller) >= 
+            offer.sharesOnSale, "not enough shares");
+    offers.add(offer);
+  }
+
+  @Override @FromContract(PayableContract.class) @Payable
+  public void accept(BigInteger amount, S buyer, O offer) {
+    require(caller() == buyer, "unauthorized");
+    require(offers.contains(offer), "unknown offer");
+    require(offer.isOngoing(), "the offer is not ongoing");
+    require(offer.cost <= amount, "not enough money");
+    offers.remove(offer);
+    removeShares(offer.seller, offer.sharesOnSale);
+    addShares(buyer, offer.sharesOnSale);
+    offer.seller.receive(offer.cost);
+  }
+
+  @Override @View public final BigInteger sharesOnSaleOf(S shareholder) {
+    return offers.stream()
+      .filter(o -> o.seller == shareholder && o.isOngoing())
+      .map(offer -> offer.sharesOnSale)
+      .reduce(ZERO, BigInteger::add);
+  }
+}
+    \end{lstlisting}
+  \end{center}
+  \caption{A simplified part of our implementation of the shared entity interface.}\label{fig:simple_shared_entity}
+\end{figure}
 
 Fig.~\ref{fig:simple_shared_entity} shows a portion of our \<SimpleSharedEntity>
 implementation of the \<SharedEntity> interface in Fig.~\ref{fig:shared_entity}, that

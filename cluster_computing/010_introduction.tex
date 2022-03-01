@@ -62,7 +62,8 @@ such as \emph{generics}\ie the possibility of using
 type variables. Generics are a powerful and very useful facility for programming
 smart contracts, since they allow one to personalize the behaviour of such contracts and partially overcome their inherent incompleteness~\cite{ebp}. In Java source code, generics are strongly typed, if no \emph{unchecked operations}
 are used~\cite{NaftalinW06}, as it will always be the case in this paper.
-However, generics might have security issue at the level of compiled Java code and this paper originated from a
+However, generics might have security issues
+at the level of compiled Java code and this paper originated from a
 real issue that we found in our code.
 
 
@@ -71,7 +72,7 @@ real issue that we found in our code.
 The contribution of this paper is to show a real-life
 use of generics for an actual smart contract contained in the support
 library of the Takamaka language, and to demonstrate that a na\"{i}ve use
-of Java generics can lead to a code security vulnerability which
+of Java generics can lead to a code security vulnerability that
 allows an attacker to earn money by exploiting someone else's work, with both economical and legal side effects.
 This paper will provide a fix to that specific issue,
 by proposing a re-engineering of the code that forces the compiler to generate defensive checks.
@@ -83,7 +84,7 @@ The remainder of this paper is organized as follows.
 Sec.~\ref{sec:java_generics} discusses the management of generics in Java.
 Sec.~\ref{sec:takamaka} presents the basic notions about the Takamaka language for smart contracts in Java.
 Sec.~\ref{sec:shared_entities} shows our real-life Java smart
-contracts shared entities, that use generic types.
+contracts for shared entities, that use generic types.
 Sec.~\ref{sec:validators} shows the instantiation of the shared entities to implement the validators' set
 of a proof of stake blockchain.
 Sec.~\ref{sec:attack} shows that a na\"{i}ve
@@ -92,3 +93,7 @@ Sec.~\ref{sec:fix} presents a fix to that vulnerability.
 Sec.~\ref{sec:related_work} discusses some related work.
 Sec.~\ref{sec:conclusion} concludes.
 
+This paper is a revised and extended version of~\cite{BeniniGMS21}.
+In comparison to that paper, Sec.~\ref{sec:takamaka} and
+Sec.~\ref{sec:validators} are new; eight figures have been added;
+all other sections have been expanded.

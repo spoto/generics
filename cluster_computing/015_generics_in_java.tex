@@ -1,6 +1,6 @@
 \section{Generics Management in Java}\label{sec:java_generics}
 
-There exists two common ways to implement generics in a programming language,
+There exist two common ways to implement generics in a programming language,
 that are often described in literature as \emph{heterogeneous}
 and \emph{homogeneous}~\cite{generics_categories}.
 In the heterogeneous approach, the code is duplicated and specialized for each instance
@@ -9,9 +9,9 @@ Conversely, the homogeneous approach is that provided by Java and .Net; in this 
 only one instance of the code is maintained and shared by all generic instances.
 This implementation is based on the type \emph{erasure} mechanism, where the generic parameter
 is replaced by the upwards bound of each instance, mostly often \<Object>.
-Even though the heterogeneous approach is the safest, it is rarely applied in particular
+Even though the heterogeneous approach is the safest, it is rarely applied, in particular
 in resource-constrained applications, because the code size may dramatically increase
-because of duplication~\cite{generics_embedded_systems}. For code in blockchain,
+as a consequence of duplication~\cite{generics_embedded_systems}. For code in blockchain,
 the heterogeneous approach obliges one to reinstall all instantiations of the generic code,
 with extra costs of gas, which makes it impractical.
 Conversely, the homogeneous approach ensures a smaller consumption of resources.
@@ -43,5 +43,5 @@ also in the presence of generic types,
 if no \emph{unchecked operations} are performed~\cite{NaftalinW06} (such as casts to generic types,
 that are unchecked for a limitation of the Java bytecode).
 However, this guarantee applies to Java source code compiled by the Java compiler,
-not to bytecode that can be generated manually, in order to attack class \<SharedEntity>,
-as we will show later.
+not to bytecode that can be generated manually, in order to attack instance of
+the \<SharedEntity> class, as we will show later.

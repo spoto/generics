@@ -9,7 +9,7 @@ in Takamaka~\cite{hotmoka_repository}. This section introduces only
 the essential notions that are needed to understand the subsequent sections.
 The hierarchy of the classes described in this section is in Fig.~\ref{fig:hierarchy-entities}.
 In the following we will report a simplified presentation of the code of some
-of such classes. The full code is in the Github repository of Hotmoka \footnote{\url{https://github.com/Hotmoka}}.
+of such classes. The full code is in the Github repository of Hotmoka~\cite{hotmoka_repository}.
 
 \begin{figure}[t]
   \begin{center}
@@ -20,12 +20,42 @@ of such classes. The full code is in the Github repository of Hotmoka \footnote{
 
 Takamaka implements objects persisted in blockchain as subclasses of the
 \<io.takamaka.code.lang.Storage> class.
-This is the main difference with other attemps at using Java for writing smart contracts:
+This is the main difference with other attempts at using Java for writing smart contracts:
 the programmer does not code the serialization and deserialization of objects into
 a \emph{keeper} or a key/value map, but simply extends \<Storage> and objects get
-persisted automatically \emph{out of magic}. In this sense, Takamaka follows the apporach of
+persisted automatically \emph{out of magic}. In this sense, Takamaka follows the approach of
 Solidity, but using Java.
 
+The \<io.takamaka.code.lang.Contract> class implements objects that can be
+persisted in blockchain \emph{and} have a balance. Therefore, they can receive and provide payments.
+Their balance is available through a \<balance> method. This is a \<@View> method, meaning
+that it can be called without paying gas (the measure of execution cost), since such methods
+cannot have side-effects and consequently do not modify the storage of the blockchain.
+Payments can be received only through methods annotated as \<@Payable>.
+The \<Contract> superclass has no such methods, but subclasses may have.
+For instance, its \<io.takamaka.code.lang.PayableContract> subclass has
+a method \<receive> to receive payments from its caller. Many methods (inclusing all
+\<@Payable> methods) need to identify their caller. This is done by adding the
+\<@FromContract> annotation, that guarantees that the caller is a contract, available
+inside the method as \<caller()>.
+
+Method calls started from outside the blockchain (for instance, from a client such as a wallet
+or from a web application), must specify an already existing \<ExternallyOwnedAccount>
+as caller. This account will pay for the gas of the execution. The blockchain will accept
+the call only if is signed with the private key that matches the public key provided to
+the constructor of the account when it was created. Method \<publicKey> allows one to
+recover that public key and method \<nonce> allows one to get a progressive identifier that
+can be used to distinguish successive calls with the same account, to force their order
+of execution and to avoid replaying.
+All that is very similar to Solidity, except for the fact that externally owned accounts
+are actual Java objects inside the blockchain, not just an abstraction of a public key. An exemplification of a call made to a \<PayableContract> is reported in Fig.\,\ref{figure.takamaka_payable_contract}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.9\linewidth]{figures/takamaka_payable_contract}
+\caption{Exemplification of the Takamaka persistent objects stored in the blockchain.}
+\label{figure.takamaka_payable_contract}
+\end{figure}
 
 \begin{figure}[th]
   \begin{center}
@@ -52,44 +82,13 @@ public final class TendermintED25519Validator extends Validator {
     this.id = bytesToHex(sha256.digest()).substring(0, 40);
   }
 
-  @Override public @View final String id() {
+  @Override @View public final String id() {
     return id;
   }
 }
     \end{lstlisting}
   \end{center}
   \caption{The account of a validator and its specialization for a Hotmoka blockchain based on Tendermint.}\label{fig:validator}
-\end{figure}
-
-The \<io.takamaka.code.lang.Contract> class implements objects that can be
-persisted in blockchain \emph{and} have a balance. Therefore, they can receive and provide payments.
-Their balance is available through a \<balance> method. This is a \<@View> method, meaning
-that it can be called without paying gas (the measure of execution cost), since such methods
-cannot have side-effects and consequently do not modify the storage of the blockchain.
-Payments can be received only through methods annotated as \<@Payable>.
-The \<Contract> superclass has no such methods, but subclasses may have.
-For instance, its \<io.takamaka.code.lang.PayableContract> subclass has
-a method \<receive> to receive payments from its caller. Many methods (inclusing all
-\<@Payable> methods) need to identify their caller. This is done by adding the
-\<@FromContract> annotation, that guarantees that the caller is a contract, that is available
-inside the method as \<caller()>.
-
-Method calls started from outside the blockchain (for instance, from a client such as a wallet
-or from a web application), must specify an already existing \<ExternallyOwnedAccount>
-as caller. This account will pay for the gas of the execution. The blockchain will accept
-the call only if is signed with the private key that matches the public key provided to
-the constructor of the account when it was created. Method \<publicKey> allows one to
-recover that public key and method \<nonce> allows one to get a progressive identifier that
-can be used to distinguish successive calls with the same account, to force their order
-of execution and to avoid replaying.
-All that is very similar to Solidity, except for the fact that externally owned accounts
-are actual Java objects inside the blockchain, not just an abstraction of a public key. An exemplification of a call made to a \<PayableContract> is reported in Fig.\,\ref{figure.takamaka_payable_contract}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.9\linewidth]{figures/takamaka_payable_contract}
-\caption{Exemplification of the Takamaka persistent objects stored in the blockchain.}
-\label{figure.takamaka_payable_contract}
 \end{figure}
 
 Neither the Takamaka language nor the Hotmoka blockchain dictate a specific consensus mechanism.
@@ -103,4 +102,5 @@ specific network.
 For instance, the subclass
 \<io.takamaka.code.governance.tendermint.TendermintED25519Validator>
 implements \<id> as for the Tendermint blockchain engine, that is,
-as the first $40$ hexadecimal digits of the sha256 digest of the Base64-encoded public key.
+as the first $40$ hexadecimal digits of the sha256 digest of the Base64-encoded public key
+(see its code in Fig.~\ref{fig:validator}).

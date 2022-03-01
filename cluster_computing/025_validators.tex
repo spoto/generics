@@ -2,18 +2,10 @@
 
 The Hotmoka blockchain is built over Tendermint~\cite{Kwon14}, a
 generic engine for replicating an application over a network of nodes. In our case,
-the application is the executor of smart contracts in Java, such as that in
+the application is an executor of smart contracts in Java, such as that in
 Fig.~\ref{fig:simple_shared_entity}. Tendermint is based on a proof of stake
 consensus, which means that a selected dynamic subset of the nodes is in charge of
 validating the transactions and voting their acceptance. 
-%
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.9\linewidth]{figures/takamaka_validators}
-\caption{Hierarchy of classes for implementing Hotmoka Validators.}
-\label{figure.takamaka_validators}
-\end{figure}
-%
 As we have said,
 Hotmoka models validator nodes as \<Validator> objects, that are externally owned accounts
 with an extra identifier. In the specific case of a Hotmoka blockchain built over Tendermint,
@@ -29,25 +21,23 @@ policy for rewarding or changing the validators' set dynamically.
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
 public interface Validators<V extends Validator>
-    extends SharedEntity<V,Offer<V>> {
+      extends SharedEntity<V,Offer<V>> {
 
-  @View
-  BigInteger getStake(V validator);
+  @View BigInteger getStake(V validator);
 
   @FromContract @Payable
   void reward(String behaving, String misbehaving, BigInteger gasConsumed);
 }
 
-public abstract class AbstractValidators
-    <V extends Validator>
+public abstract class AbstractValidators<V extends Validator>
     extends SimpleSharedEntity<V,Offer<V>> {
 
-  public AbstractValidators
-      (V validator, BigInteger power) {
+  public AbstractValidators(V validator, BigInteger power) {
     super(validator, power);
   }
 
-  public void reward(String behaving, String misbehaving, BigInteger gasConsumed) { ... }
+  public void reward(String behaving, String misbehaving,
+                     BigInteger gasConsumed) { ... }
 }
 
 public class TendermintValidators
@@ -62,6 +52,12 @@ public class TendermintValidators
   \caption{The shared entity of the validators set of a Hotmoka blockchain.}\label{fig:validators}
 \end{figure}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.9\linewidth]{figures/takamaka_validators}
+\caption{Hierarchy of classes for implementing Hotmoka Validators.}
+\label{figure.takamaka_validators}
+\end{figure}
 
 The set of the validator nodes of a blockchain network is an example of a shared entity.
 Namely, each such validator owns an amount of validation power, that corresponds to the shares
@@ -77,7 +73,7 @@ to the well-behaving validators, and slashes the stakes of the misbehaving valid
 
 The \<AbstractValidators> class implements the validators' set
 and the distribution of the reward and is a subclass of \<SimpleSharedEntity>
-(see Fig.~\ref{fig:validators}).
+(see Fig.~\ref{fig:validators} and Fig.~\ref{figure.takamaka_validators}).
 Shares are voting power in this case.
 Its subclass \<TendermintValidators> restricts the type of the validators
 to be \<TendermintED25519Validator>.

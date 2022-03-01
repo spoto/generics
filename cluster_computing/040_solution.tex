@@ -1,4 +1,4 @@
-\section{Fixing the Compilation of the Contract} \label{sec:fix}
+\section{Fixing the Compilation of the Contract}\label{sec:fix}
 
 The security issue in Sec.~\ref{sec:attack} is due to the
 over-permissive erasure of the signature of method \<accept>,
@@ -44,14 +44,13 @@ and modify its argument types, the compiled bytecode actually contains \emph{two
 public class TendermintValidators extends AbstractValidators {
   ...
   
-  public void accept
-   (BigInteger,TendermintED25519Validator,Offer)
+  public void accept(BigInteger,TendermintED25519Validator,Offer)
    aload_0
    aload_1
    aload_2
    aload_3
-   invokespecial AbstractValidators
-     .accept(BigInteger,PayableContract,Offer)
+   invokespecial AbstractValidators.accept
+                        (BigInteger,PayableContract,Offer)
    return
 
   // synthetic bridge method
@@ -61,8 +60,7 @@ public class TendermintValidators extends AbstractValidators {
    aload_2
    checkcast TendermintED25519Validator
    aload_3
-   invokevirtual accept
-      (BigInteger,TendermintED25519Validator,Offer)
+   invokevirtual accept(BigInteger,TendermintED25519Validator,Offer)
    return
 }
 \end{lstlisting}
@@ -75,7 +73,8 @@ that all calls to the erased signature \<accept(BigInteger,PayableContract,Offer
 get forwarded to the first, redefined \<accept>. It casts its \<buyer> argument
 into \<TendermintED25519Validator> and calls the first \<accept>. This
 bridge method and its checked cast guarantee that only \<TendermintED25519Validator>s
-can become validators. For instance, an instance of \<Attacker> (Fig.~\ref{fig:attacker})
+can become validators. As shown in Fig.~\ref{figure.solution},
+an instance of \<Attacker> (Fig.~\ref{fig:attacker})
 cannot be passed to the first \<accept> (type mismatch) and makes the second \<accept>
 fail with a class cast exception. The \emph{Consistency of Shareholders} holds
 for instances of \<TendermintValidators> now and the attack in Sec.~\ref{sec:attack} cannot occur
@@ -92,14 +91,14 @@ Fig.~\ref{fig:shared_entity} has parameters \<buyer> and \<offer> of generic typ
 an {\codesize\texttt{Offer<TendermintED25519Validator>}}. Hence we must redefine
 \<accept> in the subclass with the more specific types for the \<buyer> and \<offer>
 parameters. In the future, a compiler might perform this automatically or a static analysis
-tool might issue a warning when such redefinition is needed. Currently, however, this is
-left to the programmer of the smart contracts, who might overlook the issue
+tool might issue a warning when such redefinition is needed. Currently, however, that is
+left to the programmer of the smart contracts, who might overlook the problem
 and give rise to security issues, as shown in Sec.~\ref{sec:attack}.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=.95\linewidth]{figures/solution}
-\caption{Example of how the proposed solution works at run-time when the \<accept> method is called by a \<Validator> or an \<Attacker>.}
+\caption{Example of how the proposed solution works at run time when the \<accept> method is called by a \<Validator> or an \<Attacker>.}
 \label{figure.solution}
 \end{figure}
 
