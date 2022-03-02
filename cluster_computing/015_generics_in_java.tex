@@ -1,4 +1,4 @@
-\section{Generics Management in Java}\label{sec:java_generics}
+\section{Generics Implementation in Programming Languages}\label{sec:java_generics}
 
 There exist two common ways to implement generics in a programming language,
 that are often described in literature as \emph{heterogeneous}
@@ -16,6 +16,13 @@ the heterogeneous approach obliges one to reinstall all instantiations of the ge
 with extra costs of gas, which makes it impractical.
 Conversely, the homogeneous approach ensures a smaller consumption of resources.
 
+\begin{figure*}[ht]
+\centering
+\includegraphics[width=0.8\linewidth]{figures/java_generics_erasure}
+\caption{Example of generics implementation by erasure in Java.}
+\label{figure.java_generics_erasure}
+\end{figure*}
+
 In order to understand the mechanism of erasure, consider for instance
 the interface \<SharedEntity> in Fig.~\ref{fig:shared_entity} and its method \<accept>.
 The functionality of \<SharedEntity> will be discussed later (Sec.~\ref{sec:shared_entities}).
@@ -29,12 +36,7 @@ generated for \<SharedEntity>, we will see that \<accept> is declared, in byteco
 the two type variables \<S> and \<O> have been \emph{erased} and replaced with their
 respective upper bound, as illustrated in Fig.\,\ref{figure.java_generics_erasure}.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.9\linewidth]{figures/java_generics_erasure}
-\caption{Example of generics implementation by erasure in Java.}
-\label{figure.java_generics_erasure}
-\end{figure}
+
 
 Erasure weakens the type information of the compiled code. It is the responsibility of the
 compiler to guarantee that types are still respected, in all implementations of \<SharedEntity>.

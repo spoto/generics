@@ -1,4 +1,4 @@
-\section{Shared Entities using Generics}\label{sec:shared_entities}
+\section{A Generics Shared Entities Implementation}\label{sec:shared_entities}
 
 A \emph{shared entity} is a concept that often arises in blockchain
 applications. Namely, a shared entity is something divided into \emph{shares}. Participants,
@@ -9,12 +9,36 @@ a voting community, where shares represent the voting power of each given voter.
 A further example is the set of the validator nodes of a proof of stake blockchain,
 where shares represent their voting power and remuneration percentage.
 
+In general, two concepts are specific to each implementation of shared entities:
+who are the potential shareholders and how offers for selling shares work.
+Therefore, one can parameterize the interface of a shared entity with two type variables:
+\<S> is the type of the shareholders and \<O> is the type of the sale offers of shares.
+
 \begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{figures/shared_entity}
+\caption{Exemplification of a Takamaka shared entity and of its connections with the objects persisted in the blockchain.}
+\label{figure.shared_entity}
+\end{figure}
+
+The \<SharedEntityView> interface at the top of the hierarchy in Fig.~\ref{fig:hierarchy-entities}
+defines the read-only operations on a shared entity. This view is \emph{static}, in the sense that it
+does not specify the operations for transfers of shares. Therefore, its only type parameter is \<S>:
+any contract can play the role of the type for the shareholders of the entity.
+Method \<getShares> yields a snapshot of the
+current shares of the entity (who owns how much). Method \<getShareholders> yields the shareholders.
+It is not \<@View>, since it creates a new stream, which is a side-effect.
+Method \<isShareholder> checks if an object is a shareholder. Method \<sharesOf> yields
+the number of shares of a shareholder. As typical in Takamaka, a \<snapshot> method allows one
+to create a frozen read-only copy of an entity (in constant time), useful when an entity must be queried from
+a client without the risk of race conditions if another client is modifying the same entity concurrently.
+
+
+\begin{figure*}[ht]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public interface SharedEntity
-      <S extends PayableContract, O extends Offer<S>>
-      extends SharedEntityView<S> {
+public interface SharedEntity<S extends PayableContract, O extends Offer<S>>
+  extends SharedEntityView<S> {
 
   @View StorageSetView<O> getOffers();
 
@@ -48,24 +72,7 @@ public interface SharedEntity
     \end{lstlisting}
   \end{center}
   \caption{A simplified part of our shared entity interface.}\label{fig:shared_entity}
-\end{figure}
-
-In general, two concepts are specific to each implementation of shared entities:
-who are the potential shareholders and how offers for selling shares work.
-Therefore, one can parameterize the interface of a shared entity with two type variables:
-\<S> is the type of the shareholders and \<O> is the type of the sale offers of shares.
-
-The \<SharedEntityView> interface at the top of the hierarchy in Fig.~\ref{fig:hierarchy-entities}
-defines the read-only operations on a shared entity. This view is \emph{static}, in the sense that it
-does not specify the operations for transfers of shares. Therefore, its only type parameter is \<S>:
-any contract can play the role of the type for the shareholders of the entity.
-Method \<getShares> yields a snapshot of the
-current shares of the entity (who owns how much). Method \<getShareholders> yields the shareholders.
-It is not \<@View>, since it creates a new stream, which is a side-effect.
-Method \<isShareholder> checks if an object is a shareholder. Method \<sharesOf> yields
-the number of shares of a shareholder. As typical in Takamaka, a \<snapshot> method allows one
-to create a frozen read-only copy of an entity (in constant time), useful when an entity must be queried from
-a client without the risk of race conditions if another client is modifying the same entity concurrently.
+\end{figure*}
 
 The \<SharedEntity> subinterface adds methods for transfer of shares
 (see Fig.~\ref{fig:shared_entity}).
@@ -94,13 +101,6 @@ This means that shareholders must be able to receive payments and that
 is why \<S extends PayableContract>: only \<PayableContract>s are guaranteed to have a
 \<receive> method in Takamaka.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.9\linewidth]{figures/shared_entity}
-\caption{Exemplification of a Takamaka shared entity and of its connections with the objects persisted in the blockchain.}
-\label{figure.shared_entity}
-\end{figure}
-
 As said before, the annotation \<@FromContract> on both \<place> and \<accept> enforces that only
 contracts can call these methods.
 These callers must be (old or new) shareholders,
@@ -115,7 +115,7 @@ parameter \<buyer> in \<accept>.
 
 
 
-\begin{figure}[tp]
+\begin{figure*}[tp]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
 public class SimpleSharedEntity
@@ -164,7 +164,7 @@ public class SimpleSharedEntity
     \end{lstlisting}
   \end{center}
   \caption{A simplified part of our implementation of the shared entity interface.}\label{fig:simple_shared_entity}
-\end{figure}
+\end{figure*}
 
 Fig.~\ref{fig:simple_shared_entity} shows a portion of our \<SimpleSharedEntity>
 implementation of the \<SharedEntity> interface in Fig.~\ref{fig:shared_entity}, that

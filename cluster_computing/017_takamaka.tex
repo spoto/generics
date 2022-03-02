@@ -52,7 +52,7 @@ are actual Java objects inside the blockchain, not just an abstraction of a publ
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.9\linewidth]{figures/takamaka_payable_contract}
+\includegraphics[width=\linewidth]{figures/takamaka_payable_contract}
 \caption{Exemplification of the Takamaka persistent objects stored in the blockchain.}
 \label{figure.takamaka_payable_contract}
 \end{figure}
@@ -71,15 +71,20 @@ public class Validator extends ExternallyOwnedAccount {
   }
 }
 
-public final class TendermintED25519Validator extends Validator {
+public final class TendermintED25519Validator 
+       extends Validator {
   private final String id;
 
-  public TendermintED25519Validator(String publicKey) {
+  public TendermintED25519Validator
+    (String publicKey) {
     super(publicKey);
 
-    MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
-    sha256.update(Base64.getDecoder().decode(publicKey()));
-    this.id = bytesToHex(sha256.digest()).substring(0, 40);
+    MessageDigest sha256 = 
+      MessageDigest.getInstance("SHA-256");
+    sha256.update(Base64.getDecoder().
+      decode(publicKey()));
+    this.id = bytesToHex(sha256.digest()).
+      substring(0, 40);
   }
 
   @Override @View public final String id() {
@@ -100,7 +105,7 @@ It is a special externally owned account, with an extra \<id> method that provid
 identifier of the validator node inside the blockchain network. This identifier depends from the
 specific network.
 For instance, the subclass
-\<io.takamaka.code.governance.tendermint.TendermintED25519Validator>
+\<io.takamaka.code.governance.tendermint.Tender\-mintED25519Validator>
 implements \<id> as for the Tendermint blockchain engine, that is,
 as the first $40$ hexadecimal digits of the sha256 digest of the Base64-encoded public key
 (see its code in Fig.~\ref{fig:validator}).

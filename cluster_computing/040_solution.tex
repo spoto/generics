@@ -1,4 +1,4 @@
-\section{Fixing the Compilation of the Contract}\label{sec:fix}
+\section{A Solution for Fixing the Compilation of the Contract}\label{sec:fix}
 
 The security issue in Sec.~\ref{sec:attack} is due to the
 over-permissive erasure of the signature of method \<accept>,
@@ -8,7 +8,7 @@ restrictive signature where, in particular, the parameter \<buyer>
 has type \<TendermintED25519Validator>: only that type of accounts
 must be accepted for the validators, consequently banning instances of \<Attacker>.
 
-\begin{figure}[ht]
+\begin{figure*}[ht]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
 public class TendermintValidators
@@ -28,7 +28,7 @@ public class TendermintValidators
     \end{lstlisting}
   \end{center}
   \caption{The fixed code of the shared entity of the validators of a Hotmoka blockchain built over Tendermint.}\label{fig:solution}
-\end{figure}
+\end{figure*}
 
 The fixed code is shown in Fig.~\ref{fig:solution}. The only difference is that method
 \<accept> has been redefined to enforce the correct type for \<buyer>
@@ -50,7 +50,7 @@ public class TendermintValidators extends AbstractValidators {
    aload_2
    aload_3
    invokespecial AbstractValidators.accept
-                        (BigInteger,PayableContract,Offer)
+       (BigInteger,PayableContract,Offer)
    return
 
   // synthetic bridge method
@@ -60,7 +60,10 @@ public class TendermintValidators extends AbstractValidators {
    aload_2
    checkcast TendermintED25519Validator
    aload_3
-   invokevirtual accept(BigInteger,TendermintED25519Validator,Offer)
+   invokevirtual accept
+       (BigInteger,
+        TendermintED25519Validator,
+        Offer)
    return
 }
 \end{lstlisting}
@@ -95,10 +98,10 @@ tool might issue a warning when such redefinition is needed. Currently, however,
 left to the programmer of the smart contracts, who might overlook the problem
 and give rise to security issues, as shown in Sec.~\ref{sec:attack}.
 
-\begin{figure}[ht]
+\begin{figure*}[ht]
 \centering
-\includegraphics[width=.95\linewidth]{figures/solution}
+\includegraphics[width=0.9\linewidth]{figures/solution}
 \caption{Example of how the proposed solution works at run time when the \<accept> method is called by a \<Validator> or an \<Attacker>.}
 \label{figure.solution}
-\end{figure}
+\end{figure*}
 

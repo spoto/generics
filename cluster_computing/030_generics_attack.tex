@@ -28,25 +28,7 @@ Fig.~\ref{fig:simple_shared_entity}, with an unchecked cast that makes its code
 non-strongly-typed. In that case, also contracts not of type \<S> could call \<accept>
 and become shareholders.
 
-There is, however, a problem with the reasoning
-in the previous paragraph. Namely, absence of unchecked
-operations guarantees strong typing of Java \emph{source} code. But what is installed
-and executed in blockchain is the Java bytecode that has been derived from
-the compilation of the code in Fig.~\ref{fig:simple_shared_entity}.
-Malicious users might install in blockchain some manually crafted bytecode,
-not derived from its Java source code compiled together with the source code
-in Fig.~\ref{fig:simple_shared_entity}.
-That crafted code might
-call the methods of \<SimpleSharedEntity>s in order to attack
-that contract. In particular,
-the signature of method \<accept> declares a parameter \<buyer> of type \<S> at source code level, but
-its compilation into Java bytecode declares an erased
-parameter \<buyer> of type \<PayableContract> instead.
-It follows that an attacker can install in blockchain a snippet of bytecode that calls
-\<accept> and passes \emph{any} \<PayableContract>, not only those that are instances of \<S>:
-the \emph{Consistency of Shareholders} property is easily violated at bytecode level.
-
-\begin{figure}[t]
+\begin{figure}[ht]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
 public class Attacker extends ExternallyOwnedAccount {
@@ -65,12 +47,34 @@ public class Attacker extends ExternallyOwnedAccount {
   \caption{An attacker that exploits the work of a blockchain validator node and fraudolently earns the rewards of that work.}\label{fig:attacker}
 \end{figure}
 
-\begin{figure}[b]
+\begin{figure*}[ht]
 \centering
-\includegraphics[width=.9\linewidth]{figures/attack}
+\includegraphics[width=0.9\linewidth]{figures/attack}
 \caption{Example of possible attack to a smart contract using Java generics.}
 \label{figure.attack}
-\end{figure}
+\end{figure*}
+
+There is, however, a problem with the reasoning
+in the previous paragraph. Namely, absence of unchecked
+operations guarantees strong typing of Java \emph{source} code. But what is installed
+and executed in blockchain is the Java bytecode that has been derived from
+the compilation of the code in Fig.~\ref{fig:simple_shared_entity}.
+Malicious users might install in blockchain some manually crafted bytecode,
+not derived from its Java source code compiled together with the source code
+in Fig.~\ref{fig:simple_shared_entity}.
+That crafted code might
+call the methods of \<SimpleSharedEntity>s in order to attack
+that contract. In particular,
+the signature of method \<accept> declares a parameter \<buyer> of type \<S> at source code level, but
+its compilation into Java bytecode declares an erased
+parameter \<buyer> of type \<PayableContract> instead.
+It follows that an attacker can install in blockchain a snippet of bytecode that calls
+\<accept> and passes \emph{any} \<PayableContract>, not only those that are instances of \<S>:
+the \emph{Consistency of Shareholders} property is easily violated at bytecode level.
+
+
+
+
 
 In particular, it is important that the \emph{Consistency of Shareholders} property holds
 for the subclass \<TendermintValidators>: its shareholders
