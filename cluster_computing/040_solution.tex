@@ -11,8 +11,7 @@ must be accepted for the validators, consequently banning instances of \<Attacke
 \begin{figure*}[ht]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public class TendermintValidators
-   extends AbstractValidators<TendermintED25519Validator> {
+public class TendermintValidators extends AbstractValidators<TendermintED25519Validator> {
 
   public TendermintValidators(TendermintED25519validator validator, BigInteger power) {
     super(validator, power);
@@ -20,8 +19,7 @@ public class TendermintValidators
 
   @Override @FromContract(PayableContract.class) @Payable
   public void accept
-    (BigInteger amount, TendermintED25519Validator buyer, 
-     Offer<TendermintED25519Validator> offer) {
+    (BigInteger amount, TendermintED25519Validator buyer, Offer<TendermintED25519Validator> offer) {
     super.accept(amount, buyer, offer);
   }
 }

@@ -7,8 +7,7 @@
 \begin{figure*}[t]
   \begin{center}
     \begin{lstlisting}[language=Takamaka]
-public interface Validators<V extends Validator>
-       extends SharedEntity<V,Offer<V>> {
+public interface Validators<V extends Validator> extends SharedEntity<V,Offer<V>> {
 
   @View BigInteger getStake(V validator);
 
@@ -23,12 +22,10 @@ public abstract class AbstractValidators<V extends Validator>
     super(validator, power);
   }
 
-  public void reward(String behaving, String misbehaving,
-                     BigInteger gasConsumed) { ... }
+  public void reward(String behaving, String misbehaving, BigInteger gasConsumed) { ... }
 }
 
-public class TendermintValidators
-   extends AbstractValidators<TendermintED25519Validator> {
+public class TendermintValidators extends AbstractValidators<TendermintED25519Validator> {
 
   public TendermintValidators(TendermintED25519validator validator, BigInteger power) {
     super(validator, power);

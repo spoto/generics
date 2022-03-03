@@ -56,8 +56,7 @@ public interface SharedEntity<S extends PayableContract, O extends Offer<S>>
     public final BigInteger cost;
     public final long expiration;
 
-    public Offer(S seller, BigInteger sharesOnSale, 
-                 BigInteger cost,long duration) {
+    public Offer(S seller, BigInteger sharesOnSale, BigInteger cost,long duration) {
       this.seller = seller;
       this.sharesOnSale = sharesOnSale;
       this.cost = cost;
