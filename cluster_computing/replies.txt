@@ -22,10 +22,30 @@ REPLY: we have rewritten the abstract, adding in particular the following setenc
 REPLY: we agree that there is always space for improvement and better presentation of the technical material. Still, this comment does not guide us to what exactly should be organized and made more interesting. A less generic comment would help us.
 
 3- The introduction should be rewritten to clarify its message. Drawbacks of former proposals should be clearly indicated and innovations and new ideas highlighted.
+REPLY: we have reorganized the introduction and placed the following sentence at its beginning, to clarify the message.
+There are no former proposals, since generics have not been used to write smart contracts up to now, to be best of our knowledge. This is expressed clearly now:
+"The rules of blockchain transactions are specified by \emph{smart contracts},
+that are code written in a variety of programming languages. To the best of our knowledge, none of them allows generic types and, in any case,
+nothing has been published about the opportunity but also the risks of using generic types for writing smart contracts.
+The contribution of this paper is exactly to show a real-life
+use of generic types for an actual smart contract contained in the support
+library of the Takamaka language for writing smart contracts,
+and to demonstrate that a naive use
+of Java generics can lead to a code security vulnerability that
+allows an attacker to earn money by exploiting someone else's work, with both economical and legal side effects.
+This paper provides a fix to that specific issue,
+by proposing a re-engineering of the code that forces the compiler to generate defensive checks.
+More generally, this paper can be useful for the definition of
+bytecode languages for future smart contract languages, by
+learning from the weaknesses of Java bytecode, in particualr those related to the
+compilation of generics."
 
 4- Problem statement, objective & contribution are not clear.
+REPLY: the same change to the introduction highlighted at point 3 above clarifies the statemente objective and contributoin of the paper now.
 
 5- If no one has proposed before a solution like the proposed solution, this claim should be highlighted much more. Else, it should be indicated who has done this, and it should be indicated what the innovations of the current paper are.
+REPLY: the same change to the introduction highlighted at point 3 above clarifies that generic types have not been used for writing smart contracts up to now and most programming
+languages for smart contracts do not even allow the use of generics.
 
 6- For explaining the related work, the authors need to simply mentions their strategy in generic types or smart contracts, mention the advantages and disadvantages. I did not get the general view of the methods or solutions based the explanation that the authors have provided in this part.
 
