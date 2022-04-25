@@ -11,7 +11,7 @@ Let us state an important property about shared entities:
 \end{mdframed}
 \vspace{2ex}
 %
-This property is important since it states that we can trust the type \<S> of
+This property is important since it states that one can trust the type \<S> of
 the shareholders: if one creates a \<SharedEntity> and fixes a specific type \<S>
 for its shareholders, then only instances of \<S> will actually manage to become shareholders.
 
@@ -19,10 +19,10 @@ It turns out that the \emph{Consistency of Shareholders} property holds
 for instances of the class \<SimpleSharedEntity> in Fig.~\ref{fig:simple_shared_entity}.
 Namely, that class does not use unchecked casts, hence it is strongly-typed~\cite{NaftalinW06} and
 its map \<shares> actually holds values of type \<S> in its domain, only.
-For this consistency result, we had to pay the price
-of the dummy \<buyer> argument for the method \<accept>
+For this consistency result, one needs
+the dummy \<buyer> argument for the method \<accept>
 of the shared entities. Without that argument, the
-\emph{Consistency of Shareholders} property would not hold, since we could only write
+\emph{Consistency of Shareholders} property would not hold, since one could only write
 \<addShares((S) caller(), offer.sharesOnSale)> in the implementation of \<accept> in
 Fig.~\ref{fig:simple_shared_entity}, with an unchecked cast that makes its code
 non-strongly-typed. In that case, also contracts not of type \<S> could call \<accept>

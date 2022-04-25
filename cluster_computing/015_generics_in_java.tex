@@ -26,12 +26,12 @@ Conversely, the homogeneous approach ensures a smaller consumption of resources.
 In order to understand the mechanism of erasure, consider for instance
 the interface \<SharedEntity> in Fig.~\ref{fig:shared_entity} and its method \<accept>.
 The functionality of \<SharedEntity> will be discussed later (Sec.~\ref{sec:shared_entities}).
-Here, we only consider how its generic type parameters get compiled.
+Here, it is relevant to consider only how its generic type parameters get compiled.
 Namely, \<SharedEntity> uses two generic type parameters \<S> and \<O>, that must be provided
 whenever a client creates a concrete implementation of the interface.
 Such generic parameters have an upper bound: \<S> can only be a subtype of \<PayableContract>,
-while \<O> can only be a subtype of {\codesize\texttt{Offer<S>}}. If we check the bytecode
-generated for \<SharedEntity>, we will see that \<accept> is declared, in bytecode, as
+while \<O> can only be a subtype of {\codesize\texttt{Offer<S>}}. If one checks the bytecode
+generated for \<SharedEntity>, she will see that \<accept> is declared, in bytecode, as
 \<void accept(BigInteger amount, PayableContract buyer, Offer offer)>, that is,
 the two type variables \<S> and \<O> have been \emph{erased} and replaced with their
 respective upper bound, as illustrated in Fig.\,\ref{figure.java_generics_erasure}.
@@ -46,4 +46,4 @@ if no \emph{unchecked operations} are performed~\cite{NaftalinW06} (such as cast
 that are unchecked for a limitation of the Java bytecode).
 However, this guarantee applies to Java source code compiled by the Java compiler,
 not to bytecode that can be generated manually, in order to attack instances of
-the \<SharedEntity> class, as we will show later.
+the \<SharedEntity> class, as shown later.

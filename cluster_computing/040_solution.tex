@@ -89,7 +89,7 @@ that is restricted in a subclass. For instance, method \<accept> in
 Fig.~\ref{fig:shared_entity} has parameters \<buyer> and \<offer> of generic type
 \<S> and \<O>, respectively. The subclass in Fig.~\ref{fig:validators} restricts
 \<S> to be a \<TendermintED25519Validator> and \<O> to be
-an {\codesize\texttt{Offer<TendermintED25519Validator>}}. Hence we must redefine
+an {\codesize\texttt{Offer<TendermintED25519Validator>}}. Hence one must redefine
 \<accept> in the subclass with the more specific types for the \<buyer> and \<offer>
 parameters. In the future, a compiler might perform this automatically or a static analysis
 tool might issue a warning when such redefinition is needed. Currently, however, that is

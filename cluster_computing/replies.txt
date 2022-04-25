@@ -1,0 +1,44 @@
+Reviewer #1: Thank you for your submission. I highly advice you to explain a little bit more about the attack surfaces.
+REPLY: we have expanded the Conclusion section with the following paragraph:
+"This paper has shown
+the attack surface due to redefinition of methods with a ganeric parameter.
+But another example is the use of instrumented methods to allow the access to
+private state from inner classes: since inner classes are compiled into distinct
+bytecode classes, the compiler adds non-private accessors to the
+private state. These accessors cannot be used
+at source level, but can be called at bytecode level to gain access to private state.
+This paper does not provide a solution to this other issue, but this further example
+makes it clear that the attack surface is larger than what described here."
+
+Reviewer #3: This manuscript present a real security issue that the authors found while using generics for writing smart contracts that implement shared entities for the Hotmoka blockchain, and they proposed a possible solution based on an appropriate code rewriting.
+
+They are many major comments in here. I bring as much as I can.
+
+1- The abstract section should be rewritten in order to clearly state the manuscript main focus
+REPLY: we have rewritten the abstract, adding in particular the following setence:
+"This paper focuses on a real security issue found while using generics for writing smart contracts that implement \emph{shared entities} for the Hotmoka blockchain, that can lead to stealing the remuneration of validator nodes, and proposes a patch based on appropriate code rewriting."
+
+2- The manuscript should be more organized to make it more interesting for the readers.
+REPLY: we agree that there is always space for improvement and better presentation of the technical material. Still, this comment does not guide us to what exactly should be organized and made more interesting. A less generic comment would help us.
+
+3- The introduction should be rewritten to clarify its message. Drawbacks of former proposals should be clearly indicated and innovations and new ideas highlighted.
+
+4- Problem statement, objective & contribution are not clear.
+
+5- If no one has proposed before a solution like the proposed solution, this claim should be highlighted much more. Else, it should be indicated who has done this, and it should be indicated what the innovations of the current paper are.
+
+6- For explaining the related work, the authors need to simply mentions their strategy in generic types or smart contracts, mention the advantages and disadvantages. I did not get the general view of the methods or solutions based the explanation that the authors have provided in this part.
+
+7- In my view, the literature survey of introduction is quite weak, unfocused and insufficient. The literature review needs to have a flow that leads to the objectives. What is the essential problem of this work? The authors should really explain the drawback of approaches in the related works especially instead of simply stating what they have done. Besides, please explain the main contribution related to previous approaches or solutions.
+
+8- Section "Related Work" make sure you (i.e., the authors) discuss and cite the most relevant works.
+
+9- Avoid using single person pronouns like "we" throughout the manuscript.
+REPLY: we have chased and removed as many as possible of them, starting from the abstract. Currently, only two "we" remain in the manuscript, in Section 8 "Related Work", since they state our personal view.
+
+10- Some terms are just used without explaining the meaning. It is not enough to bring a concept and just bring a reference. The authors need to explain a little bit about it.
+REPLY: we have tried to imagine which are such terms. The manuscript is expected to be read by somebody working in the blockchain community, hence we do not explain all terms in that area. Yet, if there are specific terms to explain, we are happy to do it but this comment does not help us identifying the exact explanations that are missing.
+
+
+
+Reviewer #4: The manuscript is well written.  I accept the paper in its current form.

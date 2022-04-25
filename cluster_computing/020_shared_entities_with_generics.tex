@@ -106,9 +106,9 @@ These callers must be (old or new) shareholders,
 hence they must have type \<S>. Therefore, one would like to write
 \<@FromContract(S.class)>. Unfortunately, Java does not allow a generic type variable \<S>
 in the syntax \<S.class>. Due to this syntactical limitation of Java,
-the best we could write in Fig.~\ref{fig:shared_entity} is \<@FromContract(PayableContract.class)>,
+the best that can be written in Fig.~\ref{fig:shared_entity} is \<@FromContract(PayableContract.class)>,
 which allows \emph{any} \<PayableContract> to call these methods, not just those of type \<S>.
-Since the syntax of the language does not support our abstraction, we will have to
+Since the syntax of the language does not support the needed abstraction, one has to
 program explicit dynamic checks in code, as shown later, and this will be the reason of the
 parameter \<buyer> in \<accept>.
 
@@ -184,7 +184,7 @@ than one owns. At the end, \<place> adds the \<offer> to the set of \<offers>.
 Method \<accept> requires that who calls the method must be \<buyer>. Hence, successful
 calls to \<accept> can only pass the same caller for \<buyer>. This is a trick to enforce the
 caller to have type \<S>, since the syntax of the language does not allow one to express it,
-as we explained before. Then \<accept> requires the \<offer> to exist, to be still ongoing
+as explained before. Then \<accept> requires the \<offer> to exist, to be still ongoing
 and to cost no more than the \<amount> of money provided to \<accept>. If that is the case,
 the \<offer> is removed from the \<offers>, shares are moved from seller to buyer (code not
 shown in Fig.~\ref{fig:simple_shared_entity}) and the seller of the \<offer>
