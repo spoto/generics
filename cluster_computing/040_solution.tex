@@ -66,6 +66,13 @@ public class TendermintValidators extends AbstractValidators {
 }
 \end{lstlisting}
 
+\begin{figure*}[ht]
+\centering
+\includegraphics[width=0.9\linewidth]{figures/solution}
+\caption{Example of how the proposed solution works at run time when the \<accept> method is called by a \<Validator> or an \<Attacker>.}
+\label{figure.solution}
+\end{figure*}
+
 \noindent
 The first \<accept> method above is the compilation of that from Fig.~\ref{fig:solution}:
 it delegates to the \<accept> method of the superclass \<AbstractValidators>. The second
@@ -96,10 +103,4 @@ tool might issue a warning when such redefinition is needed. Currently, however,
 left to the programmer of the smart contracts, who might overlook the problem
 and give rise to security issues, as shown in Sec.~\ref{sec:attack}.
 
-\begin{figure*}[ht]
-\centering
-\includegraphics[width=0.9\linewidth]{figures/solution}
-\caption{Example of how the proposed solution works at run time when the \<accept> method is called by a \<Validator> or an \<Attacker>.}
-\label{figure.solution}
-\end{figure*}
 

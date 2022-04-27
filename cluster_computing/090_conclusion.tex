@@ -1,8 +1,8 @@
 \section{Conclusion}\label{sec:conclusion} 
 
-This paper has shown that generic types can be useful in the definition
+This paper has shown that generics are useful in the definition
 of smart contracts and can simplify the development of rather complex
-code such as those for shared entities, and support code reuse, for
+code such as that for shared entities, and support code reuse, for
 instance to implement the validators set of a blockchain network.
 However, this paper has shown that generic types
 introduce risks of security as well.
@@ -14,9 +14,9 @@ language without generics is not the solution: Solidity has no generics
 and consequently erases \emph{all} reference types into \<address>.
 That is the worst possible erasure.
 
-The solution in this paper has been to redefine a method with an argument
-of generic type in such a way to call its superclass
-(see \<accept> in Fig.~\ref{fig:solution}). This fixes the security risk,
+The solution in this paper has been to redefine the methods that have an argument
+of generic type, in such a way to call their superclass
+(see the case of \<accept> in Fig.~\ref{fig:solution}). This fixes the security risk,
 but cannot be regarded as the definite solution to the problem. It is just a trick that
 works because it forces the compiler to generate some specific kind of bytecode.
 A \emph{smarter} compiler might recognize the redefined \<accept> as
@@ -37,8 +37,8 @@ inner classes and closures (lambda expressions). This is fine at source level, b
 low-level calls to easily circumvent
 the encapsulation guarantees of the language. When embedded in a permissionless
 blockchain, such features become dangerous attack surfaces. This paper has shown
-the attack surface due to redefinition of methods with a ganeric parameter.
-But another example is the use of instrumented methods to allow the access to
+the attack surface due to redefinition of methods with a generic parameter.
+But another example is the use of instrumented methods to allow access to
 private state from inner classes: since inner classes are compiled into distinct
 bytecode classes, the compiler adds non-private accessors to the
 private state. These accessors cannot be used

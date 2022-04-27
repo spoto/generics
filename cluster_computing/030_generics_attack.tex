@@ -1,12 +1,12 @@
 \section{An Attack to the Shared Entities Contract}\label{sec:attack}
 
-Let us state an important property about shared entities:
+Let us state an important, expected property about shared entities:
 %
 \vspace{2ex}
 \begin{mdframed}[leftmargin=10pt,rightmargin=10pt]
   \begin{center}\emph{Consistency of Shareholders}\end{center}
   \noindent
-  If \<se> is a {\codesize\texttt{SharedEntity<S,O>}}
+  If \<se> is a {\codesize\texttt{SharedEntity<S,O>} object,}
   then \<se.getShareholders()> contains only elements of type \<S>.
 \end{mdframed}
 \vspace{2ex}
@@ -50,7 +50,7 @@ public class Attacker extends ExternallyOwnedAccount {
 \begin{figure*}[ht]
 \centering
 \includegraphics[width=0.9\linewidth]{figures/attack}
-\caption{Example of possible attack to a smart contract using Java generics.}
+\caption{Example of possible attack to a smart contract that uses Java generics.}
 \label{figure.attack}
 \end{figure*}
 

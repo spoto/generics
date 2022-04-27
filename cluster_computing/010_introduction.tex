@@ -9,22 +9,23 @@ In recent years, blockchain technology has rapidly emerged as a powerful tool fo
 \label{figure.solidity_problem}
 \end{figure*}
 %
-The key innovation introduced by this technology is a mechanism  able to reach an emergent agreement about a global state without the need for a central authority. Morever, another peculiarity is that the consensus is not explicit, because there is not a fixed moment when it occurs.
+That is, the key innovation introduced by this technology is a mechanism  able to reach an emergent agreement about a global state without the need for a central authority. Morever, another peculiarity is that the consensus is not explicit, because there is not a fixed moment when it occurs.
 
 The rules of blockchain transactions are specified by \emph{smart contracts},
-that are code written in a variety of programming languages. To the best of our knowledge, none of them allows generic types and, in any case,
-nothing has been published about the opportunity but also the risks of using generic types for writing smart contracts.
+that are code written in a variety of programming languages. To the best of our knowledge, none of them allows generic types (\emph{generics})
+and, in any case,
+nothing has been published about the opportunity but also the risks of using generics for writing smart contracts.
 The contribution of this paper is exactly to show a real-life
-use of generic types for an actual smart contract contained in the support
-library of the Takamaka language for writing smart contracts~\cite{Spoto19,Spoto20},
+use of generics for an actual smart contract contained in the support
+library of the Takamaka language~\cite{Spoto19,Spoto20},
 and to demonstrate that a na\"{i}ve use
 of Java generics can lead to a code security vulnerability that
 allows an attacker to earn money by exploiting someone else's work, with both economical and legal side effects.
 This paper provides a fix to that specific issue,
 by proposing a re-engineering of the code that forces the compiler to generate defensive checks.
 More generally, this paper can be useful for the definition of
-bytecode languages for future smart contract languages, by
-learning from the weaknesses of Java bytecode, in particualr those related to the
+future bytecode languages for smart contract languages, by
+learning from the weaknesses of Java bytecode, in particular from those related to the
 compilation of generics.
 
 Historically, programming languages for specifying blockchain transactions started with
@@ -32,7 +33,7 @@ Bitcoin~\cite{Nakamoto08,book-mastering-bitcoin}, the first blockchain's success
 %
 A few years after Bitcoin, another blockchain, called Ethereum~\cite{Buterin13,AntonopoulosW18}, introduced the possibility of programming transactions in an actual, imperative and Turing-complete programming language, called Solidity, also missing generic types. The major innovation of Ethereum is the construction through its nodes of a distributed \emph{world computer} that can run general-purpose code. Indeed, if the term \emph{distributed ledger} is usually used to describe blockchains like Bitcoin, Ethereum is often defined as a \emph{distributed state machine}. Solidity's code is organized in \emph{smart contracts}, namely pieces of code that are stored in the blockchain and are executed when a particular event occurs, e.g.\ when a transaction is scheduled. From a theoretical point of view, a smart contract is essentially an agreement between two or more parties that can be automatically enforced without the need for a trustworthy intermediary~\cite{ebp}. Through smart contracts, Ethereum's transactions can hence execute much more than coin transfers. In this case the global shared state is given by a set of objects that are persisted and manipulated in the same way by all nodes in the blockchain through the execution of the same object constructors and methods.
 
-The world computer built by Ethereum is known as Ethereum Virtual Machine (EVM) which is the platform where accounts and smart contracts live and are executed.
+The world computer built by Ethereum is known as Ethereum Virtual Machine (EVM) and is the platform where accounts and smart contracts live and are executed.
 Solidity is a high-level programming language and smart contracts need to be compiled into bytecode to be executed inside the EVM. At this regard, observe that, in Solidity's bytecode, non-primitive values are referenced through a very general \<address> type. For instance, a Solidity method \<child(Person p, uint256 n) returns Person> actually compiles into \<child(address p, uint256 n) returns address>, losing most type information~\cite{CrafaPZ19}. Since, at run time, it is the bytecode that gets executed, everything can be passed for \<p>, not just a \<Person> instance, as illustrated in Fig.\,\ref{figure.solidity_problem}.
 The compiler cannot even enforce strong typing by generating defensive type instance checks and casts, because values are unboxed in Ethereum: they have no attached type information at run time, they are just numerical \emph{addresses}. It follows that, inside the \<child> method, an eventual call to a \<Person>'s method on \<p> might actually execute any arbitrary code, if \<p> is not a \<Person>. In other words, Solidity is not strongly typed. Consequently, it is highly discouraged, in Solidity, to call methods on parameters passed to another method, such as on \<p> passed to \<child>, since an attacker can pass crafted objects for \<p>, with arbitrary implementations for their methods, which can result in the unexpected execution of dangerous code. This actually happened in the case of the infamous DAO hack~\cite{dao16}, that costed millions of dollars.
 
@@ -44,11 +45,10 @@ for smart contracts, called Takamaka~\cite{Spoto19,Spoto20}.
 Hyperledger~\cite{hyperldeger} allows Go and Java.
 Another reason is the availability of modern
 language features, that are missing in Solidity,
-such as \emph{generics}\ie the possibility of using
-generic type variables. Generics are a powerful and very useful facility for programming
+such as generics. They are a powerful and very useful facility for programming
 smart contracts, since they allow one to personalize the behavior of such contracts and partially overcome their inherent incompleteness~\cite{ebp}. 
 %
-Through the use of generics, it is possible to provide to users a set of predefined contract templates that can be extended and specialized by users with lower programming skills, but higher knowledge about the specific application domain. They are based on the use of type placeholders in order
+Through the use of generics, it is possible to provide to users a set of predefined contract templates that they can extend and specialize with lower programming skills, but higher knowledge about the specific application domain. Generics are based on the use of type placeholders in order
 to produce parametrized code, that can be instantiated for each
 concrete type provided for the placeholders.
 %
@@ -59,11 +59,12 @@ The remainder of this paper is organized as follows.
 Sec.~\ref{sec:java_generics} discusses the management of generics in Java.
 Sec.~\ref{sec:takamaka} presents the basic notions about the Takamaka language for smart contracts in Java.
 Sec.~\ref{sec:shared_entities} shows our real-life Java smart
-contracts for shared entities, that use generic types.
+contracts for shared entities, that use generics.
 Sec.~\ref{sec:validators} shows the instantiation of the shared entities to implement the validators' set
 of a proof of stake blockchain.
 Sec.~\ref{sec:attack} shows that a na\"{i}ve
-deployment of a subclass of the validators' set leads to a code vulnerability.
+deployment of a subclass of the validators' set leads to a code vulnerability
+due to the way generics are compiled.
 Sec.~\ref{sec:fix} presents a fix to that vulnerability.
 Sec.~\ref{sec:related_work} discusses some related work.
 Sec.~\ref{sec:conclusion} concludes.

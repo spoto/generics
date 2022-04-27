@@ -18,8 +18,8 @@ of such classes will be reported. The full code is in the Github repository of H
   \caption{The hierarchy of Takamaka classes that implement accounts, shared entities and validators. Their source code can be found inside the Java project \textsf{\url{https://github.com/Hotmoka/hotmoka/tree/master/io-takamaka-code}}.}\label{fig:hierarchy-entities}
 \end{figure*}
 
-Takamaka implements objects persisted in blockchain as subclasses of the
-\<io.takamaka.code.lang.Storage> class.
+Takamaka implements objects persisted in blockchain as subclasses of the class
+\<io.takamaka.code.lang.Storage>.
 This is the main difference with other attempts at using Java for writing smart contracts:
 the programmer does not code the serialization and deserialization of objects into
 a \emph{keeper} or a key/value map, but simply extends \<Storage> and objects get
