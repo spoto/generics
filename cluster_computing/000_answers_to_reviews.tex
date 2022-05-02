@@ -68,7 +68,7 @@ Dear Editor,
 
 \vspace{2mm}
 
-we would like to submit a new version of our paper ``On the Use of Generic Types for Smart Contracts''. We thank you and the reviewers for the comments to our submission. In particular, in this revised manuscript, we have carefully considered the reviewer comments and we have provide a detailed answer to their comments in what follows.
+we would like to submit a new version of our paper ``On the Use of Generic Types for Smart Contracts''. We thank you and the reviewers for the comments to our submission. In particular, in this revised manuscript, we have carefully considered the reviewer comments and we have provided a detailed answer to their comments in what follows.
 
 \vspace{5mm}
 
@@ -113,9 +113,9 @@ makes it clear that the attack surface is larger than what described here.''
 \section*{\textbf{Reviewer 3}}
 
 \BOX{
-This manuscript present a real security issue that the authors found while using generics for writing smart contracts that implement shared entities for the Hotmoka blockchain, and they proposed a possible solution based on an appropriate code rewriting.
+This manuscript presents a real security issue that the authors found while using generics for writing smart contracts that implement shared entities for the Hotmoka blockchain, and they proposed a possible solution based on an appropriate code rewriting.
 
-They are many major comments in here. I bring as much as I can.
+There are many major comments in here. I bring as much as I can.
 }
 
 We thank the reviewer for the comments. We tried to answer all of them in the following.
@@ -161,7 +161,7 @@ compilation of generics.''
 4 -- Problem statement, objective \& contribution are not clear.
 }
 
-The same change to the introduction highlighted at point 3 above clarifies the statemente objective and contribution of the paper now.
+The same change to the introduction highlighted at point 3 above clarifies statement, objective and contribution of the paper now.
 
 \BOX{
 5 -- If no one has proposed before a solution like the proposed solution, this claim should be highlighted much more. Else, it should be indicated who has done this, and it should be indicated what the innovations of the current paper are.
@@ -178,7 +178,7 @@ for smart contracts up to now and their related risks have not been studied.
 
 \noindent 8 -- Section "Related Work" make sure you (i.e., the authors) discuss and cite the most relevant works.}
 
-All these comments about the related work section have pushed us to add a paragraph at its beginning, that clarifies that we have really nothing to compare with and we can only put our paper in the context of engineering techniques for strengthening the correctness of software. The new section now starts as follows: ``Programming languages specific to smart contracts (such as Solidity) do not have generic types. General-purpose programming languages do have generic types in most cases, but are much less frequently used for writing smart contracts. In any case, we are not aware of any scientific work on the use of generic types for writing more generic smart contracts, nor of any study on the security risks, and their solutions, that this implies for the resulting smart contracts. From this point of view, the present paper has no direct literature to compare with. It is possible instead to insert this paper in the broader context of software correctness and security. Namely...''.
+All these comments about the related work section have pushed us to add a paragraph at its beginning, that clarifies that we have really nothing to compare with directly and we can only put our paper in the context of engineering techniques for strengthening the correctness of software. The new section now starts as follows: ``Programming languages specific to smart contracts (such as Solidity) do not have generic types. General-purpose programming languages do have generic types in most cases, but are much less frequently used for writing smart contracts. In any case, we are not aware of any scientific work on the use of generic types for writing more generic smart contracts, nor of any study on the security risks, and their solutions, that this implies for the resulting smart contracts. From this point of view, the present paper has no direct literature to compare with. It is possible instead to insert this paper in the broader context of software correctness and security. Namely...''.
 
 Moreover, we have tried to contextualize the proposed solution with respect to the described technique, asserting that it could be used in the future to automatically overcome the vulnerability or guiding the definition of the next generation of programming languages for smart contracts.
 
